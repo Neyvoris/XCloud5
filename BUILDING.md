@@ -1,6 +1,6 @@
-# Building XCloud4 from Source
+# Building XCloud5 from Source
 
-This document describes how to build both **XCloud4 Public Beta** (`X4_PUBLIC=1`) and **XCloud4 Lab** (`X4_PUBLIC=0`) from this source tree on an `x86_64` Linux host.
+This document describes how to build both **XCloud5 Public v1.3.2** (`X4_PUBLIC=1`) and the legacy **XCloud4 Lab** (`X4_PUBLIC=0`) from this source tree on an `x86_64` Linux host.
 
 ### Lab GPU conversion shaders (0.7.59)
 
@@ -104,7 +104,7 @@ export X4_RUNTIME_MODULES="$HOME/.local/share/xcloud4/runtime/sdk-v0.5.4"
 
 Both editions are compiled and packaged from the root of this repository after loading `~/.config/xcloud4/env.sh` and setting `X4_RUNTIME_MODULES`.
 
-### A. Public Beta (`X4_PUBLIC=1` -> `dist/XCloud4-1.2.0-beta-publico.pkg`)
+### A. XCloud5 v1.3.2 Public (`X4_PUBLIC=1` -> `dist/XCloud5-1.3.2-PS4.pkg`)
 
 ```bash
 source ~/.config/xcloud4/env.sh
@@ -122,9 +122,9 @@ python3 scripts/package_identity.py verify --mode public
 ```
 
 Output package:
-- `dist/XCloud4-1.2.0-beta-publico.pkg` (`TITLE`: `XCloud4`, `TITLE_ID`: `XCLD00003`, `APP_VER`: `01.06`, icon: `assets/icon0.png`)
+- `dist/XCloud5-1.3.2-PS4.pkg` (`TITLE`: `XCloud5`, `TITLE_ID`: `XCLD00003`, `APP_VER`: `01.49`, product version `1.3.2`, icon: `assets/icon0.png`)
 
-### B. Experimental Lab (`X4_PUBLIC=0` -> `dist/XCloud4-0.7.57-lab.pkg`)
+### B. Experimental Lab (`X4_PUBLIC=0` -> `dist/XCloud4-0.7.111-lab-51g.pkg`)
 
 ```bash
 source ~/.config/xcloud4/env.sh
@@ -142,7 +142,7 @@ python3 scripts/package_identity.py verify --mode normal --suffix=""
 ```
 
 Output package:
-- `dist/XCloud4-0.7.57-lab.pkg` (`TITLE`: `XCloud4 Lab`, `TITLE_ID`: `XCLD00001`, `APP_VER`: `01.25`, icon: `assets/icon0-lab.png`)
+- `dist/XCloud4-0.7.111-lab-51g.pkg` (`TITLE`: `XCloud4 Lab`, `TITLE_ID`: `XCLD00001`, `APP_VER`: `01.79`, icon: `assets/icon0-lab.png`)
 
 ---
 
@@ -153,3 +153,11 @@ During `make all`, the Makefile automatically runs two static ELF/stack gates be
 - `scripts/prepare_stream_stack_policy.py` and `scripts/audit_probe_stack.py`: verifies `-fstack-usage` (`*.su`) across all compiled translation units and ensures zero dynamic stack allocations (`-Werror=vla -Werror=alloca`).
 
 Portable host tests under `tests/` can be executed via their corresponding runner scripts in `scripts/test_*.sh`.
+
+## 5. Reproducible v1.3.2 Release Build
+
+The checked-in [GitHub Actions PS4 workflow](.github/workflows/build-v1.3.2.yml) performs an OpenOrbis v0.5.4 SHA-256 check, prepares verified SELF runtime modules and pinned libdatachannel/Mbed TLS/Opus dependencies, compiles and audits the PS4 executable, and builds the public PKG.
+
+The workflow verifies the new **512×512 RGB PNG** launcher icon at `assets/icon0.png` before compiling; the original green vector artwork is retained at `assets/icon0.svg`. The Lab image `assets/icon0-lab.png` is unchanged. Version metadata uses product version **1.3.2**, SFO `APP_VER=01.49`, and the existing public Title ID `XCLD00003`.
+
+For a release, the `v1.3.2` tag must point to exactly the same commit as the build; the `workflow_dispatch` run on `main` checks this before uploading `XCloud5-1.3.2-PS4.pkg` and `SHA256SUMS.txt`. **Host build and package checks do not replace testing sign-in and gameplay on physical PS4 hardware.**
