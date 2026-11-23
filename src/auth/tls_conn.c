@@ -34,7 +34,8 @@
 #include <fcntl.h>
 #endif
 
-enum { DNS_ENTRIES=8, DNS_TTL_US=60000000, PHASE_US=5000000, WAIT_US=100000 };
+enum { DNS_ENTRIES=8, DNS_TTL_US=60000000, PHASE_US=5000000,
+       AUTH_TCP_PHASE_US=12000000, WAIT_US=100000 };
 #if MBEDTLS_VERSION_NUMBER != 0x03060700
 #error The narrow verification-result repair below is audited for Mbed TLS 3.6.7 only
 #endif
@@ -142,6 +143,26 @@ static uint64_t phase_deadline(const X4TlsBudget *b)
     uint64_t p=b->phase_deadline_us?b->phase_deadline_us:add_time(x4_tls_now_us(),PHASE_US);
     return p<b->deadline_us?p:b->deadline_us;
 }
+/* Allow slow TCP connects to Microsoft account endpoints a little longer.
+ * Only the pre-TLS connect changes: explicit phase limits, total deadline,
+ * cancel handling and certificate verification remain unchanged. */
+static bool auth_tcp_host(const char *host)
+{
+    return host && (!strcmp(host, "login.microsoftonline.com") ||
+        !strcmp(host, "login.live.com") ||
+        !strcmp(host, "user.auth.xboxlive.com") ||
+        !strcmp(host, "xsts.auth.xboxlive.com"));
+}
+static uint64_t tcp_connect_deadline(const X4TlsBudget *b,const char *host)
+{
+    if (!auth_tcp_host(host) || b->phase_deadline_us) return phase_deadline(b);
+    uint64_t p=add_time(x4_tls_now_us(),AUTH_TCP_PHASE_US);
+    return p<b->deadline_us?p:b->deadline_us;
+}
+#ifdef X4_HTTP_TEST
+uint64_t x4_tls_test_tcp_connect_deadline(const char *host,const X4TlsBudget *b)
+{ return tcp_connect_deadline(b,host); }
+#endif
 static int budget_check(const X4TlsBudget *b,uint64_t phase)
 {
     if(b->cancel&&atomic_load_explicit(b->cancel,memory_order_relaxed))return X4_HTTP_CANCELLED;
@@ -509,7 +530,7 @@ static int connect_to(X4TlsHttp *h,const char *host,unsigned port,const X4TlsBud
     if(rc){h->info.error=rc;log_failure(&h->info);return rc;}
     X4TlsConn *c=calloc(1,sizeof(*c));if(!c)return X4_HTTP_ALLOCATION;
     c->owner=h;c->fd=-1;c->budget=*b;c->info=h->info;++h->connections;
-    mbedtls_ssl_init(&c->ssl);connection_stage(c,"conexion HTTPS");c->phase=phase_deadline(b);
+    mbedtls_ssl_init(&c->ssl);connection_stage(c,"conexion HTTPS");c->phase=tcp_connect_deadline(b,host);
     if((rc=budget_check(b,c->phase)))goto fail;
     c->fd=socket(AF_INET,SOCK_STREAM,IPPROTO_TCP);
     if(c->fd<0){rc=net_error(errno);goto fail;}
