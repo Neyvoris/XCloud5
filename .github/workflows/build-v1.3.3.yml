@@ -33,14 +33,33 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends python3-venv
           python3 -m venv "$RUNNER_TEMP/xcloud5-l10n"
-          "$RUNNER_TEMP/xcloud5-l10n/bin/pip" install --disable-pip-version-check "Pillow==12.3.0"
+          "$RUNNER_TEMP/xcloud5-l10n/bin/pip" install --disable-pip-version-check "Pillow==12.3.0" "argostranslate==1.11.0"
+
+      - name: Install open-source offline English-Russian translation model
+        shell: bash
+        run: |
+          set -euo pipefail
+          "$RUNNER_TEMP/xcloud5-l10n/bin/python" - <<'PY'
+          import argostranslate.package
+          import argostranslate.translate
+          argostranslate.package.update_package_index()
+          packages=argostranslate.package.get_available_packages()
+          match=[p for p in packages if p.from_code=="en" and p.to_code=="ru"]
+          if not match:
+              raise RuntimeError("No Argos en→ru package in trusted public index")
+          package=match[-1]
+          print("Installing offline model:",package,flush=True)
+          location=package.download()
+          argostranslate.package.install_from_path(location)
+          print("Sample:",argostranslate.translate.translate("The game is ready.","en","ru"),flush=True)
+          PY
 
       - name: Generate complete offline Russian localization for packaged source
         shell: bash
         run: |
           set -euo pipefail
-          python3 scripts/generate_russian_localization.py --generate
-          python3 scripts/generate_russian_localization.py --check
+          "$RUNNER_TEMP/xcloud5-l10n/bin/python" scripts/generate_russian_localization.py --generate
+          "$RUNNER_TEMP/xcloud5-l10n/bin/python" scripts/generate_russian_localization.py --check
 
       - name: Regenerate Russian-capable Noto Sans and Inter atlases
         shell: bash
