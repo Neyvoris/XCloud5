@@ -15,8 +15,14 @@ from PIL import Image, ImageDraw, ImageFont, __version__ as pillow_version
 
 MAGIC = b"X4FNT01\0"
 SIZES = (18, 26, 28, 32, 38, 46, 56)
+# Preserve Latin-script languages while adding Russian uppercase/lowercase,
+# Ё/ё and the numero sign. Selected combining marks cover the forms used by
+# existing translations; including all 112 marks would exceed the 4 MiB atlas.
+RUSSIAN_CODEPOINTS = set(range(0x0410, 0x0450)) | {0x0401, 0x0451, 0x2116}
+COMBINING_MARKS = {0x0300, 0x0301, 0x0302, 0x0303, 0x0304, 0x0306,
+                   0x0307, 0x0308, 0x030A, 0x0327}
 CODEPOINTS = sorted(set(range(32, 127)) | set(range(160, 384)) |
-                    set(range(0x300, 0x370)) |
+                    COMBINING_MARKS | RUSSIAN_CODEPOINTS |
                     {0x2010, 0x2013, 0x2014, 0x2018, 0x2019, 0x201c,
                      0x201d, 0x201e, 0x2022, 0x2026, 0x2122, 0xfffd})
 INTER_CODEPOINTS = sorted(set(CODEPOINTS) | {0x2039, 0x203a})
