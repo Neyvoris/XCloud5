@@ -57,6 +57,8 @@ jobs:
 
       - name: Generate complete offline Russian localization for packaged source
         shell: bash
+        env:
+          ARGOS_BEAM_SIZE: "1" # Faster greedy decoding; printf safety remains exact
         run: |
           set -euo pipefail
           "$RUNNER_TEMP/xcloud5-l10n/bin/python" scripts/generate_russian_localization.py --generate
