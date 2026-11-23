@@ -9,6 +9,7 @@ enum X4Lang {
     X4_LANG_FR,
     X4_LANG_IT,
     X4_LANG_DE,
+    X4_LANG_RU,
     X4_LANG_COUNT,
 };
 
@@ -943,7 +944,8 @@ enum X4TextId {
 #define X4_TR_51G_PREPARE_MANUAL ((enum X4TextId)(X4_TR_COUNT + 425))
 #define X4_TR_51G_EXPERIMENTAL ((enum X4TextId)(X4_TR_COUNT + 426))
 #define X4_TR_51G_REMOVE_PKG ((enum X4TextId)(X4_TR_COUNT + 427))
-#define X4_TR_ALL_COUNT (X4_TR_COUNT + 428)
+#define X4_TR_50_LANG_RU ((enum X4TextId)(X4_TR_COUNT + 428))
+#define X4_TR_ALL_COUNT (X4_TR_COUNT + 429)
 
 int x4_lang_init(void);
 void x4_lang_apply_system_id(int32_t param_lang);
