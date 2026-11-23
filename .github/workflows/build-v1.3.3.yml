@@ -1,0 +1,193 @@
+name: Build XCloud5 v1.3.3 Russian UI and PS4 PKG
+
+on:
+  push:
+    branches:
+      - fix/v1.3.3-updater-ru
+      - main
+    paths:
+      - '.github/workflows/build-v1.3.3.yml'
+      - 'src/**'
+      - 'scripts/**'
+      - 'assets/**'
+      - 'tests/**'
+      - 'RELEASE_NOTES_1.3.3.md'
+      - 'README.md'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  ps4-package:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - name: Check out exact source revision
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Prepare controlled Python authoring tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends python3-venv
+          python3 -m venv "$RUNNER_TEMP/xcloud5-l10n"
+          "$RUNNER_TEMP/xcloud5-l10n/bin/pip" install --disable-pip-version-check "Pillow==12.3.0"
+
+      - name: Generate complete offline Russian localization for packaged source
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/generate_russian_localization.py --generate
+          python3 scripts/generate_russian_localization.py --check
+
+      - name: Regenerate Russian-capable Noto Sans and Inter atlases
+        shell: bash
+        run: |
+          set -euo pipefail
+          "$RUNNER_TEMP/xcloud5-l10n/bin/python" scripts/generate_font_assets.py
+          python3 scripts/check_russian_assets.py
+
+      - name: Validate language tables and updater routing
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -Fq '#define X4_HTTP_RELEASES_URL_PUBLIC "https://api.github.com/repos/Neyvoris/XCloud5/releases/latest"' src/auth/http_client.h
+          grep -Fq '"https://github.com/Neyvoris/XCloud5/releases/download/%s/%s"' src/auth/http_client.c
+          gcc -std=c11 -O2 -DX4_PUBLIC=1 -Wall -Wextra tests/lang50_test.c -o "$RUNNER_TEMP/xcloud5-lang-test"
+          "$RUNNER_TEMP/xcloud5-lang-test"
+          bash scripts/test_font.sh
+
+      - name: Commit complete Russian source and generated font binaries
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/ui/lang_ru.inc src/ui/lang_ru_stage.inc scripts/ru_translation_cache.json
+          git add assets/fonts/noto_sans.x4font assets/fonts/inter.x4font
+          git add assets/fonts/font_fallback.h assets/fonts/ATLAS.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Generate verified full Russian translation and Cyrillic PS4 font atlases"
+            git push origin "HEAD:${GITHUB_REF#refs/heads/}"
+          fi
+
+      - name: Verify approved green launcher icon
+        shell: bash
+        run: |
+          set -euo pipefail
+          printf '%s  %s\n' '34a1f9a6dc9a32c34369f882fa2bf7e88083e62f573a6497452ce8657f1bffb3' 'assets/icon0.png' | sha256sum -c -
+          python3 - <<'PY'
+          import struct
+          from pathlib import Path
+          p=Path("assets/icon0.png").read_bytes()
+          assert p[:8]==b"\x89PNG\r\n\x1a\n"
+          w,h,depth,color=struct.unpack(">IIBB",p[16:26])
+          assert (w,h,depth,color)==(512,512,8,2)
+          print("Approved PS4 icon: 512 x 512, RGB8")
+          PY
+
+      - name: Install host build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential clang lld make cmake ninja-build \
+            git python3 curl ca-certificates pkg-config unzip
+
+      - name: Download and verify OpenOrbis v0.5.4 SDK
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="$HOME/.local/share/xcloud4"
+          mkdir -p "$base"
+          curl --fail --location --retry 3 --connect-timeout 20 --max-time 300 \
+            --proto '=https' --tlsv1.2 \
+            'https://github.com/OpenOrbis/OpenOrbis-PS4-Toolchain/releases/download/v0.5.4/toolchain-llvm-18.tar.gz' \
+            --output "$RUNNER_TEMP/openorbis-v0.5.4.tar.gz"
+          printf '%s  %s\n' \
+            '3c7cd5bb593ca74fa1c13fd59f3938dc0fc07985167f7275063019e63abe4526' \
+            "$RUNNER_TEMP/openorbis-v0.5.4.tar.gz" | sha256sum -c -
+          tar -xzf "$RUNNER_TEMP/openorbis-v0.5.4.tar.gz" -C "$base"
+          echo "OO_PS4_TOOLCHAIN=$base/OpenOrbis/PS4Toolchain" >> "$GITHUB_ENV"
+          echo "$base/OpenOrbis/PS4Toolchain/bin/linux" >> "$GITHUB_PATH"
+
+      - name: Prepare genuine OpenOrbis PS4 SELF runtime modules
+        shell: bash
+        run: |
+          set -euo pipefail
+          runtime="$HOME/.local/share/xcloud4/runtime/sdk-v0.5.4"
+          mkdir -p "$runtime"
+          for module in libSceFios2.prx libc.prx; do
+            cp "$OO_PS4_TOOLCHAIN/src/modules/$module" "$runtime/$module"
+          done
+          python3 - <<'PY'
+          import os
+          from pathlib import Path
+          root = Path.home()/'.local/share/xcloud4/runtime/sdk-v0.5.4'
+          for filename in ('libSceFios2.prx','libc.prx'):
+              assert (root/filename).read_bytes()[:4] == bytes.fromhex('4f153d1d')
+          PY
+          echo "X4_RUNTIME_MODULES=$runtime" >> "$GITHUB_ENV"
+
+      - name: Prepare isolated PkgTool OpenSSL 1.1 host runtime
+        run: bash scripts/preparar-empaquetador.sh
+
+      - name: Build pinned native WebRTC, Mbed TLS and Opus libraries
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash scripts/webrtc/build_native.sh
+
+      - name: Compile PS4 Public Edition
+        shell: bash
+        run: |
+          set -euo pipefail
+          make -j2 X4_RECEIVER_NACK=1 X4_NACK_GRACE_MS=45 X4_RUMBLE=1 \
+            X4_INGRESS_MODE=mpsc X4_VIDEO_CAPACITY_1080=1 X4_VIDEO_PROBE=0 \
+            X4_STREAM_PROFILE=1 X4_PUBLIC=1 all
+
+      - name: Package verified XCloud5 v1.3.3 PS4 installer
+        shell: bash
+        run: |
+          set -euo pipefail
+          X4_PACKAGE_MODE=public X4_STREAM_PROFILE=1 X4_PUBLIC=1 bash scripts/empaquetar.sh
+          python3 scripts/package_identity.py verify --mode public
+          test -s dist/XCloud5-1.3.3-PS4.pkg
+          sha256sum dist/XCloud5-1.3.3-PS4.pkg | tee dist/SHA256SUMS.txt
+          echo "Verified output directory:"
+          find dist -maxdepth 1 -type f -printf "%f (%s bytes)\n"
+
+      - name: Upload installer as workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: XCloud5-v1.3.3-PS4
+          path: |
+            dist/XCloud5-1.3.3-PS4.pkg
+            dist/SHA256SUMS.txt
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Publish verified stable v1.3.3 GitHub Release
+        if: github.ref == 'refs/heads/main'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          commit="$(git rev-parse HEAD)"
+          if gh release view v1.3.3 --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Stable v1.3.3 already exists; refusing to alter a published release"
+            exit 1
+          fi
+          gh release create v1.3.3 \
+            dist/XCloud5-1.3.3-PS4.pkg dist/SHA256SUMS.txt \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$commit" \
+            --title "XCloud5 v1.3.3 — Russian UI & Update Fix" \
+            --notes-file RELEASE_NOTES_1.3.3.md \
+            --latest
+          gh release view v1.3.3 --repo "$GITHUB_REPOSITORY" \
+            --json tagName,isDraft,isPrerelease,assets,url
