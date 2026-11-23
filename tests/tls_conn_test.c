@@ -431,6 +431,44 @@ static void deadline_case(uint64_t interval,const char *label)
     CHECK(x4_tls_conn_close(connection)==0);CHECK(x4_tls_http_close(http)==0);server_close(&server);
     printf("PASS tls %s elapsed_us=%llu\n",label,(unsigned long long)elapsed);
 }
+/* Verify the auth-only TCP allowance without waiting for an external server. */
+static void auth_tcp_deadline_case(void)
+{
+    static const char *const auth_hosts[] = {
+        "login.microsoftonline.com",
+        "login.live.com",
+        "user.auth.xboxlive.com",
+        "xsts.auth.xboxlive.com",
+    };
+    X4TlsBudget budget = budget_after(UINT64_C(30000000), NULL);
+    for (size_t i = 0; i < sizeof(auth_hosts)/sizeof(auth_hosts[0]); ++i) {
+        uint64_t before = x4_tls_now_us();
+        uint64_t due = x4_tls_test_tcp_connect_deadline(auth_hosts[i], &budget);
+        uint64_t after = x4_tls_now_us();
+        CHECK(due >= before + UINT64_C(12000000));
+        CHECK(due <= after + UINT64_C(12000000));
+        CHECK(due < budget.deadline_us);
+    }
+
+    uint64_t before = x4_tls_now_us();
+    uint64_t due = x4_tls_test_tcp_connect_deadline("example.com", &budget);
+    uint64_t after = x4_tls_now_us();
+    CHECK(due >= before + UINT64_C(5000000));
+    CHECK(due <= after + UINT64_C(5000000));
+
+    /* Caller-enforced short phase remains authoritative. */
+    budget.phase_deadline_us = x4_tls_now_us() + UINT64_C(120000);
+    CHECK(x4_tls_test_tcp_connect_deadline("login.microsoftonline.com", &budget) ==
+          budget.phase_deadline_us);
+    budget.phase_deadline_us = 0;
+
+    /* The global request deadline remains a hard cap. */
+    budget.deadline_us = x4_tls_now_us() + UINT64_C(120000);
+    CHECK(x4_tls_test_tcp_connect_deadline("login.microsoftonline.com", &budget) ==
+          budget.deadline_us);
+
+    puts("PASS tls: auth TCP connect budget, explicit overrides and global deadline");
+}
 static void phase_deadline_case(void)
 {
     Server server;server_open(&server,&fixture.valid,MBEDTLS_SSL_VERSION_TLS1_3,SERVER_STALL_HANDSHAKE);
@@ -544,7 +582,7 @@ int main(int argc,char **argv)
     cancel_pending_connect();cancellation_case(true);cancellation_case(false);
     deadline_case(UINT64_C(2000000),"2s request budget");
     deadline_case(UINT64_C(120000),"short absolute request budget");
-    phase_deadline_case();
+    auth_tcp_deadline_case();phase_deadline_case();
     reset_after_partial_body();certificates_close();
     printf("PASS tls_conn_test checks=%u; in-memory generated test CA/keys only; no external hosts, files or HTTP policy claims\n",atomic_load(&checks));
     return 0;
