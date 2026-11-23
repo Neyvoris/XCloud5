@@ -18,4 +18,4 @@ This file clarifies provenance; it does not replace copyright notices in source 
 
 XCloud5 is distributed under GPL-3.0-only. Copyright and license notices associated with third-party and earlier code must remain intact, including when code is modified or rebranded. Source file headers and Git history may contain additional acknowledgments specific to individual files.
 
-The repository owner of XCloud5 is **ivanopolo30-dot**; appearing in GitHub's automatically generated *Contributors* section does not imply current administration, endorsement, or ownership of this repository.
+The repository owner of XCloud5 is **Neyvoris**; appearing in GitHub's automatically generated *Contributors* section does not imply current administration, endorsement, or ownership of this repository.
