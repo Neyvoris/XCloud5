@@ -91,6 +91,7 @@ static void apply(X4UiLangPreference preference)
         [X4_UI_LANG_ES] = X4_LANG_ES, [X4_UI_LANG_EN] = X4_LANG_EN,
         [X4_UI_LANG_PT_BR] = X4_LANG_PT_BR, [X4_UI_LANG_FR] = X4_LANG_FR,
         [X4_UI_LANG_IT] = X4_LANG_IT, [X4_UI_LANG_DE] = X4_LANG_DE,
+        [X4_UI_LANG_RU] = X4_LANG_RU,
     };
     current = preference;
     x4_lang_set_ui(preference == X4_UI_LANG_AUTO ? x4_lang_system_ui() : manual[preference]);
@@ -205,6 +206,7 @@ const char *x4_ui_lang_pref_label(X4UiLangPreference preference)
     static const enum X4TextId labels[X4_UI_LANG_COUNT] = {
         X4_TR_50_LANG_AUTO, X4_TR_50_LANG_ES, X4_TR_50_LANG_EN, X4_TR_50_LANG_PT_BR,
         X4_TR_50_LANG_FR, X4_TR_50_LANG_IT, X4_TR_50_LANG_DE,
+        X4_TR_50_LANG_RU,
     };
     return x4_tr(labels[valid(preference) ? preference : X4_UI_LANG_AUTO]);
 }
