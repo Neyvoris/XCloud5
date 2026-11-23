@@ -27,6 +27,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           persist-credentials: true
+          fetch-depth: 0 # required for safe source-generation rebase across concurrent CI
 
       - name: Prepare controlled Python authoring tools
         run: |
