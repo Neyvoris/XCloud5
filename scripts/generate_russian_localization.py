@@ -154,29 +154,16 @@ def restored(string, tokens):
 
 
 def translate_request(message):
-    params = urllib.parse.urlencode({
-        "client": "gtx", "sl": "en", "tl": "ru",
-        "dt": "t", "q": message,
-    })
-    url = "https://translate.googleapis.com/translate_a/single?" + params
-    req = urllib.request.Request(url, headers={
-        "User-Agent": "Mozilla/5.0 (XCloud5 localization build)",
-        "Accept": "application/json",
-    })
-    last_error = None
-    for attempt in range(5):
-        try:
-            with urllib.request.urlopen(req, timeout=25) as response:
-                data = json.load(response)
-            result = "".join(p[0] or "" for p in data[0] if isinstance(p, list) and p)
-            if not result:
-                raise ValueError("Translation service returned an empty result")
-            return result
-        except (ValueError, urllib.error.HTTPError, urllib.error.URLError, TimeoutError) as exc:
-            last_error = exc
-            if attempt < 4:
-                time.sleep(1.5 * (attempt + 1))
-    raise RuntimeError("Translation endpoint failed: " + str(last_error))
+    """Translate using the pinned, installed offline Argos en→ru model.
+
+    No per-string network calls: the translation package is installed once
+    in the GitHub Actions authoring environment, never in the PS4 package.
+    """
+    import argostranslate.translate
+    result = argostranslate.translate.translate(message, "en", "ru")
+    if not result:
+        raise ValueError("Offline translator returned no text")
+    return result
 
 
 def translate_one(text):
@@ -224,7 +211,7 @@ def prepare_translations(inputs, overrides, cache):
     if batch:
         groups.append(batch)
     print(f"Russian generation: {len(pending)} unique new strings in {len(groups)} batches", flush=True)
-    with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
         future_map = {executor.submit(translate_group, group): group for group in groups}
         for index, future in enumerate(concurrent.futures.as_completed(future_map), 1):
             group = future_map[future]
