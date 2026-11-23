@@ -18,8 +18,8 @@ PUBLIC_CONTENT_ID = "IV0000-XCLD00003_00-XCLOUD4PUBLIC000"
 VERSION = "01.79"
 PRODUCT_VERSION = "0.7.111-lab"
 NORMAL_PACKAGE_NAME = "XCloud4-0.7.111-lab-51g.pkg"
-PUBLIC_VERSION = "01.47"
-PUBLIC_PRODUCT_VERSION = "1.3.0-beta"
+PUBLIC_VERSION = "01.48"
+PUBLIC_PRODUCT_VERSION = "1.3.1"
 LEGACY_PROBE_VERSION = "01.55"
 LEGACY_PROBE_PRODUCT_VERSION = "0.7.87-lab"
 T26_VERSION = "02.02"
@@ -56,9 +56,9 @@ def metadata(mode="normal", variant="", suffix=""):
     elif mode == "public":
         if variant or suffix not in ("", "-publico"):
             raise ValueError("Public mode has no probe variant and only allows empty or -publico suffix")
-        title, title_id, content_id = "XCloud4", PUBLIC_TITLE_ID, PUBLIC_CONTENT_ID
+        title, title_id, content_id = "XCloud5", PUBLIC_TITLE_ID, PUBLIC_CONTENT_ID
         version, product_version = PUBLIC_VERSION, PUBLIC_PRODUCT_VERSION
-        package_name = "XCloud4-1.3.0-beta-publico-51g.pkg"
+        package_name = "XCloud5-1.3.1-PS4.pkg"
         stage, dist, demo = "build/package-public", "dist", False
         stream_profile = 1
     elif mode == "probe":
