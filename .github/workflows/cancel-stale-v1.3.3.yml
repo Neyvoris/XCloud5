@@ -33,3 +33,5 @@ jobs:
               gh run cancel "$id" --repo "$GITHUB_REPOSITORY" || true
             fi
           done
+
+# Single-source model translation build gate after API rate limiting.
