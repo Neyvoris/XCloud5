@@ -1420,7 +1420,11 @@ int x4_http_update_asset(X4Http *h, const char *tag, const char *asset_name,
     }
     if (!rc) {
         const int size = snprintf(wire->url, sizeof(wire->url),
+            #if X4_PUBLIC
+            "https://github.com/Neyvoris/XCloud5/releases/download/%s/%s", tag, asset_name);
+#else
             "https://github.com/asp11edgr/XCloud4/releases/download/%s/%s", tag, asset_name);
+#endif
         if (size < 0 || (size_t)size >= sizeof(wire->url)) rc = X4_HTTP_URL;
     }
     if (!rc) {
