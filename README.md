@@ -5,24 +5,34 @@
 <p align="center"><img src="assets/icon0.png" width="160" height="160" alt="Current packaged application icon"></p>
 
 [![Latest release](https://img.shields.io/github/v/release/ivanopolo30-dot/XCloud5?display_name=tag)](https://github.com/ivanopolo30-dot/XCloud5/releases/latest)
-[![Build XCloud5 v1.3.1](https://github.com/ivanopolo30-dot/XCloud5/actions/workflows/build-v1.3.1.yml/badge.svg)](https://github.com/ivanopolo30-dot/XCloud5/actions/workflows/build-v1.3.1.yml)
+[![Build XCloud5 v1.3.2](https://github.com/ivanopolo30-dot/XCloud5/actions/workflows/build-v1.3.2.yml/badge.svg)](https://github.com/ivanopolo30-dot/XCloud5/actions/workflows/build-v1.3.2.yml)
 [![License: GPL-3.0-only](https://img.shields.io/badge/license-GPL--3.0--only-blue)](LICENSE)
 
 XCloud5 brings an Xbox-style cloud gaming experience to a **PS4 running GoldHEN**, without pretending to be an official Xbox or PlayStation application. The project builds with the open-source OpenOrbis PS4 Toolchain.
 
-**Latest published package:** [XCloud5 v1.3.1 — Bug Fix](https://github.com/ivanopolo30-dot/XCloud5/releases/tag/v1.3.1) · [Download the PS4 installer](https://github.com/ivanopolo30-dot/XCloud5/releases/download/v1.3.1/XCloud5-1.3.1-PS4.pkg)
+**Latest package:** [XCloud5 v1.3.2 — New Icon](https://github.com/ivanopolo30-dot/XCloud5/releases/tag/v1.3.2) · [Download the PS4 installer](https://github.com/ivanopolo30-dot/XCloud5/releases/download/v1.3.2/XCloud5-1.3.2-PS4.pkg)
 
 > **Independent software.** Not affiliated with, sponsored by, or endorsed by Microsoft, Xbox, Sony, or PlayStation. Xbox Cloud Gaming access, titles, subscriptions, and regions are governed by Microsoft's terms. This software is provided without warranty.
 
 ## What's new
 
+### v1.3.2 — New PlayStation 4 icon (23 November 2026)
+
+- Added the approved **Xbox-green XCloud5 app icon** with a white cloud, Xbox emblem, minimal PS4 controller silhouette, and XCloud5 wordmark.
+- Clean, uniform white and green fills replace the old art, with no gradient artifacts or decorative frame.
+- Public PS4 icon is a **512 × 512 PNG**; the experimental Lab edition retains its separate icon.
+- Updated package to **1.3.2 / APP_VER 01.49**, preserving Title ID `XCLD00003` so it can upgrade the existing public installation.
+- Previous **1.3.1 Microsoft sign-in timeout fix** and Xbox Home improvements are retained.
+
+**This is a branding and documentation release, not a new authentication or streaming overhaul.**
+
 ### v1.3.1 — Sign-in bug fix (23 November 2026)
 
-- Improved **Microsoft sign-in reliability** for the "Could not complete sign-in" / **\`0x8041013c · HTTP 0\`** error that can occur while opening an HTTPS connection.
+- Improved **Microsoft sign-in reliability** for the "Could not complete sign-in" / **`0x8041013c · HTTP 0`** error that can occur while opening an HTTPS connection.
 - Increased the **TCP connection phase timeout** for selected Microsoft authentication endpoints from **5 to 12 seconds**.
 - Kept the overall **30-second request deadline**, cancellation polling, TLS certificate verification, and hostname checks unchanged.
 - Added regression checks for default versus Microsoft-specific deadlines, caller overrides, and the absolute request cap.
-- Rebranded the **public PS4 package to XCloud5**, with product version **1.3.1**, PS4 package version **01.48**, and the unchanged public Title ID \`XCLD00003\`.
+- Rebranded the **public PS4 package to XCloud5**, with product version **1.3.1**, PS4 package version **01.48**, and the unchanged public Title ID `XCLD00003`.
 - Built the release with a GitHub Actions pipeline that verifies the OpenOrbis SDK download hash, compiles pinned dependencies, audits the executable, packages the PS4 application, validates package metadata, and uploads the installer and its checksum.
 
 **Verification:** [the successful GitHub Actions build](https://github.com/ivanopolo30-dot/XCloud5/actions/runs/45262215890) passed compilation, native streaming gates, package verification, and release upload. **A successful build is not proof that sign-in or gameplay works on every PS4.** The original timeout case still needs real-console confirmation. Other errors caused by blocked networks, DNS, routing, or service outages may remain.
@@ -31,7 +41,7 @@ Changes: [sign-in fix PR #1](https://github.com/ivanopolo30-dot/XCloud5/pull/1),
 
 ### Xbox Home interface and usability work
 
-The project also includes the Xbox Home-inspired redesign and navigation improvements developed in the \`xbox-home-motion\` work:
+The project also includes the Xbox Home-inspired redesign and navigation improvements developed in the `xbox-home-motion` work:
 
 - Home, Discover, Catalog, My Games, Search, Account, and Settings with richer game artwork.
 - Transitions and animated selection/focus states, including the in-game touchpad overlay.
@@ -71,18 +81,18 @@ The upstream project reports testing on a PS4 Fat with firmware 12.00 and GoldHE
 ## Download and install
 
 1. Open the [latest release](https://github.com/ivanopolo30-dot/XCloud5/releases/latest).
-2. Download **\`XCloud5-1.3.1-PS4.pkg\`** from **Assets**, along with **\`SHA256SUMS.txt\`** if you want to verify the file. The GitHub-generated *Source code (zip)* and *Source code (tar.gz)* are **not** PS4 installers.
-3. Transfer the \`.pkg\` to a USB drive formatted as FAT32/exFAT, or copy it to \`/data/pkg/\` using GoldHEN FTP.
+2. Download **`XCloud5-1.3.2-PS4.pkg`** from **Assets**, along with **`SHA256SUMS.txt`** if you want to verify the file. The GitHub-generated *Source code (zip)* and *Source code (tar.gz)* are **not** PS4 installers.
+3. Transfer the `.pkg` to a USB drive formatted as FAT32/exFAT, or copy it to `/data/pkg/` using GoldHEN FTP.
 4. Install it using **GoldHEN → Package Installer** (or the corresponding Debug Settings package installer).
 5. Launch **XCloud5**, select **Sign in**, and follow the Microsoft device-code instructions on your phone/PC. Enter credentials **only** on Microsoft's official sign-in site.
 
-**Upgrade compatibility:** The public package keeps **Title ID \`XCLD00003\`** and Content ID \`IV0000-XCLD00003_00-XCLOUD4PUBLIC000\`. Its PS4 metadata version is **01.48**. The legacy Content ID is deliberately unchanged for update compatibility and is not evidence of an old binary.
+**Upgrade compatibility:** The public package keeps **Title ID `XCLD00003`** and Content ID `IV0000-XCLD00003_00-XCLOUD4PUBLIC000`. Its PS4 metadata version is **01.49**. The legacy Content ID is deliberately unchanged for update compatibility and is not evidence of an old binary.
 
-**Checksum:** compare the SHA-256 of your download with the \`SHA256SUMS.txt\` asset from the same release. Never rename an older package to imitate a new version.
+**Checksum:** compare the SHA-256 of your download with the `SHA256SUMS.txt` asset from the same release. Never rename an older package to imitate a new version.
 
 ### In-app updates
 
-The client checks GitHub Releases for updates and includes a path to download and verify supported update packages to \`/data/pkg\`. Depending on the environment, you may still need to close the application and install the downloaded file manually from GoldHEN's Package Installer. Automatic installation is not guaranteed on every console.
+The client checks GitHub Releases for updates and includes a path to download and verify supported update packages to `/data/pkg`. Depending on the environment, you may still need to close the application and install the downloaded file manually from GoldHEN's Package Installer. Automatic installation is not guaranteed on every console.
 
 ## PS4 controls
 
@@ -107,17 +117,17 @@ The public v1.3.1 package provides six interface languages: **Español, English,
 
 Store locale and market settings are separate from the interface language. Changing UI language does **not** grant access to different cloud games or change account eligibility.
 
-**Russian (\`Русский\`) is being added as a follow-up localization**; do not assume it exists in the already-published v1.3.1 installer. Existing Spanish and English translations will remain supported.
+**Russian (`Русский`) is being added as a follow-up localization**; do not assume it exists in the already-published v1.3.1 installer. Existing Spanish and English translations will remain supported.
 
 ## Troubleshooting
 
-### Could not complete sign-in · \`0x8041013c\` · \`HTTP 0\`
+### Could not complete sign-in · `0x8041013c` · `HTTP 0`
 
 This points to a **TCP/HTTPS connection timeout before an OAuth HTTP response**; it is **not** itself evidence that Microsoft rejected your password. Version 1.3.1 allows more time for Microsoft authentication connections. If the error persists:
 
 1. Verify the PS4 can access the internet and check the console date/time.
 2. Restart the application and, if useful, test an Ethernet connection.
-3. Check DNS resolution and router/firewall restrictions; optionally test reliable public DNS servers such as \`1.1.1.1\` or \`8.8.8.8\`.
+3. Check DNS resolution and router/firewall restrictions; optionally test reliable public DNS servers such as `1.1.1.1` or `8.8.8.8`.
 4. Try the same network with another device and check Xbox service availability.
 5. Report the exact error code, stage, firmware, GoldHEN version, and XCloud5 version in a [GitHub issue](https://github.com/ivanopolo30-dot/XCloud5/issues), **without posting passwords, device codes, tokens, or sensitive log details**.
 
@@ -126,7 +136,7 @@ This points to a **TCP/HTTPS connection timeout before an OAuth HTTP response**;
 | Symptom | Possible next step |
 | --- | --- |
 | No Xbox profile | Sign in at [xbox.com](https://www.xbox.com) and finish creating your Xbox profile |
-| DNS error \`0x804101DC–0x804101EF\`, \`0x80410140\`, or \`0x80410141\` | Check PS4 network and DNS settings |
+| DNS error `0x804101DC–0x804101EF`, `0x80410140`, or `0x80410141` | Check PS4 network and DNS settings |
 | No game video | Retry the title or switch servers if the Settings UI allows it; record diagnostic details |
 | Xbox queue / busy servers | Wait, cancel, or retry when service capacity improves |
 | Region / access error | Verify the account and title are supported in your region using [Xbox regional information](https://www.xbox.com/regions) |
@@ -151,29 +161,29 @@ The public v1.3.1 source uses:
 
 - OpenOrbis PS4 Toolchain **v0.5.4**, with the upstream SDK archive SHA-256 checked by CI.
 - Pinned **libdatachannel 0.24.6**, **libjuice 1.7.4**, usrsctp, libsrtp, **Mbed TLS 3.6.7**, and **Opus 1.5.2**.
-- PS4 \`libSceFios2.prx\` and \`libc.prx\` SELF runtime modules.
-- \`X4_PUBLIC=1\` for the downloadable public edition; \`X4_PUBLIC=0\` for experimental Lab.
-- Version \`1.3.1\` / PS4 \`APP_VER=01.48\` / \`XCLD00003\`.
+- PS4 `libSceFios2.prx` and `libc.prx` SELF runtime modules.
+- `X4_PUBLIC=1` for the downloadable public edition; `X4_PUBLIC=0` for experimental Lab.
+- Version `1.3.2` / PS4 `APP_VER=01.49` / `XCLD00003`.
 
 ### Automated build and tests
 
-The [v1.3.1 workflow](.github/workflows/build-v1.3.1.yml) runs on Ubuntu, installs host tools, verifies the SDK, builds pinned libraries, compiles the PS4 executable, runs native import/stack gates, produces the PKG, verifies package identity, and creates SHA-256 output. The confirmed [release build](https://github.com/ivanopolo30-dot/XCloud5/actions/runs/45262215890) completed successfully and uploaded the installer to [v1.3.1](https://github.com/ivanopolo30-dot/XCloud5/releases/tag/v1.3.1).
+The [v1.3.2 workflow](.github/workflows/build-v1.3.2.yml) runs on Ubuntu, installs host tools, verifies the SDK, builds pinned libraries, compiles the PS4 executable, runs native import/stack gates, produces the PKG, verifies package identity, and creates SHA-256 output. The [v1.3.1 release build](https://github.com/ivanopolo30-dot/XCloud5/actions/runs/45262215890) completed successfully and uploaded its installer. The v1.3.2 workflow follows the same checks and packages the approved icon.
 
-Additional **host tests** live under \`tests/\` and \`scripts/test_*.sh\`, covering areas such as languages, settings persistence, catalog and artwork caching, HTTP/TLS, authentication, controller navigation, image/audio/video processing, stream recovery, and package identity. These tests are not equivalent to testing Xbox Cloud Gaming end-to-end on a physical PS4.
+Additional **host tests** live under `tests/` and `scripts/test_*.sh`, covering areas such as languages, settings persistence, catalog and artwork caching, HTTP/TLS, authentication, controller navigation, image/audio/video processing, stream recovery, and package identity. These tests are not equivalent to testing Xbox Cloud Gaming end-to-end on a physical PS4.
 
-**Known verification boundary:** the repository also includes older documentation in \`src/streaming/README.md\` describing an earlier 0.6.2 streaming state. It is historical and should not be treated as a verified statement about every feature in v1.3.1. Real-console gameplay, sign-in, and device compatibility still need independent confirmation.
+**Known verification boundary:** the repository also includes older documentation in `src/streaming/README.md` describing an earlier 0.6.2 streaming state. It is historical and should not be treated as a verified statement about every feature in v1.3.1. Real-console gameplay, sign-in, and device compatibility still need independent confirmation.
 
 ## Project structure
 
-- \`src/core/\`: application lifecycle, identity, orchestration.
-- \`src/ui/\`: UI, language tables, navigation, catalog/game pages.
-- \`src/auth/\`: Microsoft/Xbox authentication, HTTPS, sessions.
-- \`src/streaming/\`, \`src/video/\`, \`src/audio/\`, \`src/media/\`: streaming and media pipelines.
-- \`src/input/\`: controller handling.
-- \`src/update/\`: release checks and package updates.
-- \`assets/\`: application icon, backgrounds, fonts, resource files.
-- \`scripts/\`: build, packaging, audits, diagnostics, test runners.
-- \`tests/\`: native and portable test fixtures.
+- `src/core/`: application lifecycle, identity, orchestration.
+- `src/ui/`: UI, language tables, navigation, catalog/game pages.
+- `src/auth/`: Microsoft/Xbox authentication, HTTPS, sessions.
+- `src/streaming/`, `src/video/`, `src/audio/`, `src/media/`: streaming and media pipelines.
+- `src/input/`: controller handling.
+- `src/update/`: release checks and package updates.
+- `assets/`: application icon, backgrounds, fonts, resource files.
+- `scripts/`: build, packaging, audits, diagnostics, test runners.
+- `tests/`: native and portable test fixtures.
 
 ## License, attribution, and contribution
 
