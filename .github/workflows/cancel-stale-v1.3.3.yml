@@ -35,3 +35,5 @@ jobs:
           done
 
 # Single-source model translation build gate after API rate limiting.
+
+# Keep the single fully isolated build after checkout fetch-depth correction.
