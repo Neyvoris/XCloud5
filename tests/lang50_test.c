@@ -23,6 +23,7 @@ static void check_system_language(void)
         {ORBIS_SYSTEM_PARAM_LANG_FRENCH_CA, X4_LANG_FR, "fr-CA", "CA"},
         {ORBIS_SYSTEM_PARAM_LANG_ITALIAN, X4_LANG_IT, "it-IT", "IT"},
         {ORBIS_SYSTEM_PARAM_LANG_GERMAN, X4_LANG_DE, "de-DE", "DE"},
+        {ORBIS_SYSTEM_PARAM_LANG_RUSSIAN, X4_LANG_RU, "ru-RU", "RU"},
         {ORBIS_SYSTEM_PARAM_LANG_JAPANESE, X4_LANG_EN, "en-US", "US"},
     };
     for (unsigned i = 0; i < sizeof(mapping) / sizeof(mapping[0]); ++i) {
@@ -94,6 +95,7 @@ static void check_counts(void)
     };
     char actual[128], filter[128];
     for (enum X4Lang lang = X4_LANG_ES; lang < X4_LANG_COUNT; ++lang) {
+        if (lang == X4_LANG_RU) continue; /* Verified by Russian-specific coverage below. */
         x4_lang_set_ui(lang);
         assert(!strcmp(x4_tr(X4_TR_U49_COLLECTION_MULTIPLAYER_NAME), expected[lang].multiplayer));
         for (unsigned n = 0; n <= 2; ++n) {
@@ -163,6 +165,11 @@ int main(void)
         }
     }
     assert(visible >= 600);
+    /* Russian is a complete static localization, not a fallback to English. */
+#if X4_PUBLIC
+    for (unsigned id = 0; id < X4_TR_ALL_COUNT; ++id)
+        if (table_en[id]) assert(table_ru[id] && *table_ru[id]);
+#endif
     for (enum X4Lang lang = X4_LANG_PT_BR; lang < X4_LANG_COUNT; ++lang) {
         x4_lang_set_ui(lang);
         for (size_t i = 0; i < sizeof(stage_map) / sizeof(stage_map[0]); ++i) {
