@@ -8,8 +8,9 @@ contacts that service. Generated .inc files are committed with release source.
 Fail closed if any required entry cannot be translated or format placeholders
 change; never silently ship an incomplete "fully translated" release.
 
-The translation endpoint is an unofficial public service and may change.
-Use --check to validate existing generated files fully offline.
+The pinned offline Argos model is used only during authoring. Generated
+strings ship inside the client; no language model or network translation is
+required on PS4. Use --check to validate files without translation dependencies.
 """
 import argparse
 import ast
@@ -167,36 +168,39 @@ def translate_request(message):
 
 
 def translate_one(text):
+    """Translate only natural-language segments; NEVER send C format fields to NMT.
+
+    NMT models may change, remove or move unknown sentinel tokens. Translation
+    of the segments around literal printf fields is less idiomatic but preserves
+    argument count, order and type by construction (crash-safety property).
+    """
     if not text or not text.strip():
         return text
-    # Never submit escape sequences as JSON/C syntax; translation is plain text.
-    p, tokens = protected(text.replace("XCloud4", "XCloud5"))
-    output = translate_request(p)
-    output = restored(output, tokens)
-    prefix = text[:len(text) - len(text.lstrip())]
-    suffix = text[len(text.rstrip()):]
-    return prefix + output.strip() + suffix
+    source = text.replace("XCloud4", "XCloud5")
+    placeholders = PRINTF.findall(source)
+    segments = PRINTF.split(source)
+    result = []
+    for i, segment in enumerate(segments):
+        if segment.strip():
+            leading = segment[:len(segment) - len(segment.lstrip())]
+            trailing = segment[len(segment.rstrip()):]
+            translated = translate_request(segment.strip())
+            result.append(leading + translated.strip() + trailing)
+        else:
+            result.append(segment)
+        if i < len(placeholders):
+            result.append(placeholders[i])
+    output = "".join(result)
+    if PRINTF.findall(output) != placeholders:
+        raise ValueError("Translated message changed a printf placeholder: " + repr(text))
+    return output
 
 
 def translate_group(group):
-    if len(group) == 1:
-        return [translate_one(group[0])]
-    prepared = [protected(t.replace("XCloud4", "XCloud5")) for t in group]
-    body = ("\n" + MARKER + "\n").join(v[0] for v in prepared)
-    try:
-        result = translate_request(body)
-        chunks = result.split(MARKER)
-        if len(chunks) != len(group):
-            raise ValueError("Unexpected translated segment count")
-        results = []
-        for original, chunk, (_, tokens) in zip(group, chunks, prepared):
-            out = restored(chunk.strip(), tokens)
-            prefix = original[:len(original) - len(original.lstrip())]
-            suffix = original[len(original.rstrip()):]
-            results.append(prefix + out + suffix)
-        return results
-    except Exception:
-        return [translate_one(text) for text in group]
+    # The offline model is strongest with one UI sentence at a time. Emoji/ASCII
+    # separators were not reliably preserved; avoid wasting an extra inference
+    # and do not risk cross-message leakage.
+    return [translate_one(text) for text in group]
 
 
 def prepare_translations(inputs, overrides, cache):
