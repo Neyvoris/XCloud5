@@ -7,7 +7,7 @@ typedef struct X4TlsHttp X4TlsHttp;
 typedef struct X4TlsConn X4TlsConn;
 typedef struct {
     uint64_t deadline_us; /* absolute monotonic request/reconnect deadline */
-    uint64_t phase_deadline_us; /* 0: start a fresh phase of at most 5 s */
+    uint64_t phase_deadline_us; /* 0: default 5 s; auth TCP connect 12 s */
     const _Atomic int *cancel;
     _Atomic(const char *) *stage; /* optional UI-safe publication, literals only */
 } X4TlsBudget;
@@ -46,6 +46,8 @@ X4TlsInfo x4_tls_http_info(const X4TlsHttp *);
 X4TlsInfo x4_tls_conn_info(const X4TlsConn *);
 
 #ifdef X4_HTTP_TEST
+/* Allows deterministic timing checks without external HTTPS requests. */
+uint64_t x4_tls_test_tcp_connect_deadline(const char *,const X4TlsBudget *);
 /* Test anchors/port/CBC mode exist only in host fixtures. VERIFY_REQUIRED
  * and hostname verification remain mandatory even in these test entrypoints. */
 X4TlsHttp *x4_tls_http_test_open(const uint8_t *const *der,const size_t *sizes,
