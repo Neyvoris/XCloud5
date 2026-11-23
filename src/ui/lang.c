@@ -17,6 +17,7 @@ enum {
     ORBIS_SYSTEM_PARAM_LANG_ITALIAN = 5,
     ORBIS_SYSTEM_PARAM_LANG_DUTCH = 6,
     ORBIS_SYSTEM_PARAM_LANG_PORTUGUESE_PT = 7,
+    ORBIS_SYSTEM_PARAM_LANG_RUSSIAN = 8,
     ORBIS_SYSTEM_PARAM_LANG_PORTUGUESE_BR = 17,
     ORBIS_SYSTEM_PARAM_LANG_ENGLISH_GB = 18,
     ORBIS_SYSTEM_PARAM_LANG_SPANISH_LA = 20,
@@ -126,6 +127,9 @@ void x4_lang_apply_system_id(int32_t param_lang)
     case ORBIS_SYSTEM_PARAM_LANG_ITALIAN:
         x4_lang_set(X4_LANG_IT, "it-IT", "IT");
         break;
+    case ORBIS_SYSTEM_PARAM_LANG_RUSSIAN:
+        x4_lang_set(X4_LANG_RU, "ru-RU", "RU");
+        break;
     default:
         x4_lang_set(X4_LANG_EN, "en-US", "US");
         break;
@@ -143,7 +147,7 @@ int x4_lang_init(void)
         return (int)rc;
     }
     x4_lang_apply_system_id(raw_lang);
-    static const char *const labels[] = {"es", "en", "pt-BR", "fr", "it", "de"};
+    static const char *const labels[] = {"es", "en", "pt-BR", "fr", "it", "de", "ru"};
     printf("XCloud4: idioma consola=%d ui=%s locale=%s market=%s\n",
         (int)raw_lang, labels[current_lang], current_locale, current_market);
     return 0;
@@ -4987,6 +4991,9 @@ static const char *const table_de[X4_TR_ALL_COUNT] = {
     [X4_TR_51G_REMOVE_PKG] = "Du kannst diese Datei aus /data/pkg löschen, um Speicherplatz freizugeben.",
 };
 
+/* Generated complete Russian UI table. Existing language indices remain stable. */
+#include "lang_ru.inc"
+
 #ifdef X4_UI49_CAPTURE
 static bool pseudo_for_test;
 static char pseudo_texts[2][X4_TR_ALL_COUNT][1024];
@@ -5014,7 +5021,7 @@ static const char *pseudo_text(enum X4TextId id, const char *text)
 const char *x4_tr_for_lang(enum X4Lang language, enum X4TextId id)
 {
     static const char *const *const tables[X4_LANG_COUNT] = {
-        table_es, table_en, table_pt_br, table_fr, table_it, table_de,
+        table_es, table_en, table_pt_br, table_fr, table_it, table_de, table_ru,
     };
     if ((unsigned)id >= X4_TR_ALL_COUNT) return "";
     if ((unsigned)language >= X4_LANG_COUNT) language = X4_LANG_EN;
@@ -5309,6 +5316,9 @@ static const struct {
     {"no se pudieron preparar o cerrar los medios nativos", "could not prepare or close native media", "não foi possível preparar ou fechar a mídia nativa", "impossible de préparer ou de fermer le média natif", "impossibile preparare o chiudere il sottosistema multimediale nativo", "native Medien konnten nicht vorbereitet oder geschlossen werden", NULL},
 };
 
+/* Russian stage texts use the same protocol-stage ordering as stage_map. */
+#include "lang_ru_stage.inc"
+
 static const char *stage_translation(size_t index, enum X4Lang language)
 {
     switch (language) {
@@ -5317,6 +5327,7 @@ static const char *stage_translation(size_t index, enum X4Lang language)
     case X4_LANG_FR: return stage_map[index].fr;
     case X4_LANG_IT: return stage_map[index].it;
     case X4_LANG_DE: return stage_map[index].de;
+    case X4_LANG_RU: return stage_ru[index] ? stage_ru[index] : stage_map[index].en;
     default: return stage_map[index].en;
     }
 }
