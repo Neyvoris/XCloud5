@@ -187,7 +187,7 @@ Additional **host tests** live under `tests/` and `scripts/test_*.sh`, covering 
 
 ## License, attribution, and contribution
 
-XCloud5 is distributed under **GNU GPL-3.0-only**. See [LICENSE](LICENSE), [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md), and [docs/licenses](docs/licenses). It builds on the independent [XCloud4 project by asp11edgr](https://github.com/asp11edgr/XCloud4) and other contributors; its original authorship and applicable notices are retained. The XCloud5 fork adds its own UI, navigation, maintenance, packaging, and release work.
+XCloud5 is distributed under **GNU GPL-3.0-only**. See [LICENSE](LICENSE), [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md), and [docs/licenses](docs/licenses). XCloud5 includes earlier GPL-licensed components and later independent changes to UI, navigation, networking, packaging, and artwork. Specific source provenance and historical contributions are documented in [SOURCE_PROVENANCE.md](SOURCE_PROVENANCE.md); applicable notices are retained.
 
 Issues and constructive contributions are welcome. Before posting debug logs or screenshots, remove account identifiers and secrets.
 
