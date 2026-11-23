@@ -1,6 +1,6 @@
 # Building XCloud5 from Source
 
-This document describes how to build both **XCloud5 Public v1.3.2** (`X4_PUBLIC=1`) and the legacy **XCloud4 Lab** (`X4_PUBLIC=0`) from this source tree on an `x86_64` Linux host.
+This document describes how to build both **XCloud5 Public v1.3.3** (`X4_PUBLIC=1`) and the legacy **XCloud4 Lab** (`X4_PUBLIC=0`) from this source tree on an `x86_64` Linux host.
 
 ### Lab GPU conversion shaders (0.7.59)
 
@@ -104,7 +104,7 @@ export X4_RUNTIME_MODULES="$HOME/.local/share/xcloud4/runtime/sdk-v0.5.4"
 
 Both editions are compiled and packaged from the root of this repository after loading `~/.config/xcloud4/env.sh` and setting `X4_RUNTIME_MODULES`.
 
-### A. XCloud5 v1.3.2 Public (`X4_PUBLIC=1` -> `dist/XCloud5-1.3.2-PS4.pkg`)
+### A. XCloud5 v1.3.3 Public (`X4_PUBLIC=1` -> `dist/XCloud5-1.3.3-PS4.pkg`)
 
 ```bash
 source ~/.config/xcloud4/env.sh
@@ -122,7 +122,7 @@ python3 scripts/package_identity.py verify --mode public
 ```
 
 Output package:
-- `dist/XCloud5-1.3.2-PS4.pkg` (`TITLE`: `XCloud5`, `TITLE_ID`: `XCLD00003`, `APP_VER`: `01.49`, product version `1.3.2`, icon: `assets/icon0.png`)
+- `dist/XCloud5-1.3.3-PS4.pkg` (`TITLE`: `XCloud5`, `TITLE_ID`: `XCLD00003`, `APP_VER`: `01.50`, product version `1.3.3`, icon: `assets/icon0.png`)
 
 ### B. Experimental Lab (`X4_PUBLIC=0` -> `dist/XCloud4-0.7.111-lab-51g.pkg`)
 
@@ -154,10 +154,10 @@ During `make all`, the Makefile automatically runs two static ELF/stack gates be
 
 Portable host tests under `tests/` can be executed via their corresponding runner scripts in `scripts/test_*.sh`.
 
-## 5. Reproducible v1.3.2 Release Build
+## 5. Reproducible v1.3.3 Release Build
 
-The checked-in [GitHub Actions PS4 workflow](.github/workflows/build-v1.3.2.yml) performs an OpenOrbis v0.5.4 SHA-256 check, prepares verified SELF runtime modules and pinned libdatachannel/Mbed TLS/Opus dependencies, compiles and audits the PS4 executable, and builds the public PKG.
+The checked-in [GitHub Actions PS4 workflow](.github/workflows/build-v1.3.3.yml) performs an OpenOrbis v0.5.4 SHA-256 check, prepares verified SELF runtime modules and pinned libdatachannel/Mbed TLS/Opus dependencies, compiles and audits the PS4 executable, and builds the public PKG.
 
-The workflow verifies the new **512×512 RGB PNG** launcher icon at `assets/icon0.png` before compiling; the original green vector artwork is retained at `assets/icon0.svg`. The Lab image `assets/icon0-lab.png` is unchanged. Version metadata uses product version **1.3.2**, SFO `APP_VER=01.49`, and the existing public Title ID `XCLD00003`.
+The workflow verifies the new **512×512 RGB PNG** launcher icon at `assets/icon0.png` before compiling; the original green vector artwork is retained at `assets/icon0.svg`. The Lab image `assets/icon0-lab.png` is unchanged. Version metadata uses product version **1.3.3**, SFO `APP_VER=01.50`, and the existing public Title ID `XCLD00003`.
 
-For a release, the `v1.3.2` tag must point to exactly the same commit as the build; the `workflow_dispatch` run on `main` checks this before uploading `XCloud5-1.3.2-PS4.pkg` and `SHA256SUMS.txt`. **Host build and package checks do not replace testing sign-in and gameplay on physical PS4 hardware.**
+The v1.3.3 main-branch workflow publishes a stable GitHub release only after generating, validating, and committing the complete Russian translation and Cyrillic fonts, compiling and verifying the PS4 package and checksums. No pre-created release tag is required; the workflow creates the release at its checked-out source commit. **Host build and package checks do not replace testing sign-in and gameplay on physical PS4 hardware.**
