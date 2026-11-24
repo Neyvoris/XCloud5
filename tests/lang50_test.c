@@ -146,6 +146,11 @@ int main(void)
     check_system_language();
     check_counts();
     check_catalog_and_stage_labels();
+#if X4_PUBLIC
+    for (enum X4Lang lang = X4_LANG_ES; lang < X4_LANG_COUNT; ++lang)
+        assert(!strcmp(x4_tr_for_lang(lang, X4_TR_UI2_MODAL_UPDATE_LINK),
+            "github.com/Neyvoris/XCloud5/releases"));
+#endif
     static const char *const *const translated[] = {table_pt_br, table_fr, table_it, table_de};
     unsigned visible = 0;
     for (unsigned id = 0; id < X4_TR_ALL_COUNT; ++id) {
