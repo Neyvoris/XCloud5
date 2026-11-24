@@ -16,7 +16,7 @@
 #define X4_SOURCE_ID "858a20ad1b27ba46d7db0ef97e76d19426a6e5ce"
 #else
 #if X4_PUBLIC
-#define X4_PRODUCT_VERSION "1.3.2"
+#define X4_PRODUCT_VERSION "1.3.3"
 #else
 #define X4_PRODUCT_VERSION "0.7.87-lab"
 #endif

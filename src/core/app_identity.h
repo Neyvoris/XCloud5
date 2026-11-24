@@ -8,12 +8,12 @@
 #undef X4_PRODUCT_VERSION
 #undef X4_SOURCE_ID
 #if X4_PUBLIC
-#define X4_PRODUCT_VERSION "1.3.2"
+#define X4_PRODUCT_VERSION "1.3.3"
 #else
 #define X4_PRODUCT_VERSION "0.7.111-lab"
 #endif
 #if X4_PUBLIC
-#define X4_APP_VERSION "01.49"
+#define X4_APP_VERSION "01.50"
 #else
 #define X4_APP_VERSION "01.79"
 #endif

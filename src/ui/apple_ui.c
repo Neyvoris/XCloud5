@@ -60,11 +60,16 @@ bool x4_apple_update_notice_offer(X4UpdateNotice *notice,const char *version,
     memcpy(notice->version,version,size+1);
     notice->local = notice->can_install = notice->install_focused = false;
     notice->tag[0] = 0;
+#if X4_PUBLIC
+    const char *const releases = "https://github.com/Neyvoris/XCloud5/releases";
+#else
+    const char *const releases = "https://github.com/asp11edgr/XCloud4/releases";
+#endif
     if (update_tag_valid(tag)) {
         (void)snprintf(notice->tag, sizeof(notice->tag), "%s", tag);
-        snprintf(notice->url,sizeof(notice->url),"https://github.com/asp11edgr/XCloud4/releases/tag/%s",tag);
+        snprintf(notice->url,sizeof(notice->url),"%s/tag/%s",releases,tag);
     } else
-        snprintf(notice->url,sizeof(notice->url),"https://github.com/asp11edgr/XCloud4/releases");
+        snprintf(notice->url,sizeof(notice->url),"%s",releases);
     notice->open=true;
     if (!is_test) notice->shown=true;
     return true;
@@ -127,7 +132,9 @@ void x4_apple_update_notice_draw(const X4UpdateNotice *notice,uint32_t *p)
     x4_apple_text_wrap(p,362,362,30,X4_FONT_SEMIBOLD,version,700,42,4,X4_UI2_ACCENT);
     update_notice_qr(p,1180,376,notice->url);
     x4_apple_text_wrap(p,1138,728,20,X4_FONT_REGULAR,x4_tr(X4_TR_UPDATE_NOTICE_DESCRIPTION),420,28,3,X4_RGB(197,209,225));
-    x4_text_ellipsis_px(p,1138,824,18,X4_FONT_REGULAR,"github.com/asp11edgr/XCloud4/releases",420,X4_RGB(171,188,209));
+    x4_text_ellipsis_px(p,1138,824,18,X4_FONT_REGULAR,
+        X4_PUBLIC ? "github.com/Neyvoris/XCloud5/releases" : "github.com/asp11edgr/XCloud4/releases",
+        420,X4_RGB(171,188,209));
     x4_apple_draw_footer_hint(p,362,770,X4_PAD_CIRCLE,x4_tr(X4_TR_UPDATE_NOTICE_CLOSE));
 }
 
@@ -1437,16 +1444,28 @@ void x4_apple_draw_account_pill(uint32_t *pixels, int x, int y, int h,
 
 const char *x4_region_qr_url(enum X4Lang lang)
 {
+#if X4_PUBLIC
+    return (lang != X4_LANG_ES)
+        ? "https://github.com/Neyvoris/XCloud5/blob/main/docs/region-en.md"
+        : "https://github.com/Neyvoris/XCloud5/blob/main/docs/region-es.md";
+#else
     return (lang != X4_LANG_ES)
         ? "https://github.com/asp11edgr/XCloud4/blob/main/docs/region-en.md"
         : "https://github.com/asp11edgr/XCloud4/blob/main/docs/region-es.md";
+#endif
 }
 
 const char *x4_region_qr_short_label(enum X4Lang lang)
 {
+#if X4_PUBLIC
+    return (lang != X4_LANG_ES)
+        ? "github.com/Neyvoris/XCloud5 \xe2\x80\xba docs \xe2\x80\xba region-en.md"
+        : "github.com/Neyvoris/XCloud5 \xe2\x80\xba docs \xe2\x80\xba region-es.md";
+#else
     return (lang != X4_LANG_ES)
         ? "github.com/asp11edgr/XCloud4 \xe2\x80\xba docs \xe2\x80\xba region-en.md"
         : "github.com/asp11edgr/XCloud4 \xe2\x80\xba docs \xe2\x80\xba region-es.md";
+#endif
 }
 
 const char *x4_region_qr_caption(enum X4Lang lang)

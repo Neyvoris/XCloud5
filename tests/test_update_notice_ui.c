@@ -10,7 +10,13 @@
 #include <stdlib.h>
 #include <string.h>
 
+#if X4_PUBLIC
+#define RELEASES "https://github.com/Neyvoris/XCloud5/releases"
+#define RELEASES_LABEL "github.com/Neyvoris/XCloud5/releases"
+#else
 #define RELEASES "https://github.com/asp11edgr/XCloud4/releases"
+#define RELEASES_LABEL "github.com/asp11edgr/XCloud4/releases"
+#endif
 static bool record_text;
 static bool title_rendered,url_rendered;
 static char body_rendered[512],description_rendered[512];
@@ -48,7 +54,7 @@ void __wrap_x4_text_ellipsis_px(uint32_t *pixels,int x,int y,int size,int weight
             assert(!strcmp(text,x4_tr(X4_TR_UPDATE_NOTICE_TITLE)));title_rendered=true;
         }
         if(x==1138&&y==824){
-            assert(!strcmp(text,"github.com/asp11edgr/XCloud4/releases"));url_rendered=true;
+            assert(!strcmp(text,RELEASES_LABEL));url_rendered=true;
         }
     }
     __real_x4_text_ellipsis_px(pixels,x,y,size,weight,text,max_width,color);

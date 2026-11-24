@@ -60,7 +60,7 @@ int main(void)
 {
     reset();offer_step();assert(update_notice.open&&update_notice.shown&&status_reads==2&&tag_reads==1);
     assert(notice_signature()!=2166136261u);
-    assert(!strcmp(update_notice.url,X4_PUBLIC?"https://github.com/asp11edgr/XCloud4/releases/tag/v9.8.7":"https://github.com/asp11edgr/XCloud4/releases/tag/lab-9.8.7"));
+    assert(!strcmp(update_notice.url,X4_PUBLIC?"https://github.com/Neyvoris/XCloud5/releases/tag/v9.8.7":"https://github.com/asp11edgr/XCloud4/releases/tag/lab-9.8.7"));
     unsigned before=status_reads;offer_step();assert(status_reads==before); /* No second offer. */
     const unsigned other_buttons[]={ORBIS_PAD_BUTTON_CROSS,ORBIS_PAD_BUTTON_OPTIONS,ORBIS_PAD_BUTTON_TRIANGLE,0xffffu&~ORBIS_PAD_BUTTON_CIRCLE};
     for(unsigned i=0;i<sizeof(other_buttons)/sizeof(*other_buttons);++i){controller.pressed=other_buttons[i];consume_step();assert(update_notice.open&&!controller.pressed);}
@@ -74,7 +74,8 @@ int main(void)
         case 10:busy=true;break;case 11:live_retained=true;break;case 12:session_back=true;break;}
         offer_step();assert(!update_notice.open&&!update_notice.shown&&!status_reads&&!tag_reads);
     }
-    reset();valid_tag=false;offer_step();assert(update_notice.open&&!strcmp(update_notice.url,"https://github.com/asp11edgr/XCloud4/releases"));
+    reset();valid_tag=false;offer_step();assert(update_notice.open&&!strcmp(update_notice.url,
+        X4_PUBLIC ? "https://github.com/Neyvoris/XCloud5/releases" : "https://github.com/asp11edgr/XCloud4/releases"));
     for(unsigned state=0;state<=X4_UPDATE_FAILED;++state)if(state!=X4_UPDATE_AVAILABLE){reset();release_status=(enum X4UpdateStatus)state;offer_step();assert(!update_notice.open&&!update_notice.shown&&!tag_reads);}
 #if !X4_PUBLIC
     reset();screen.page=5;stream_settings_ui.open=true;controller.pressed=ORBIS_PAD_BUTTON_TRIANGLE;ui_pressed=1;

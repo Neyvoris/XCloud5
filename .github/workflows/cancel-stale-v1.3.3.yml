@@ -1,0 +1,24 @@
+name: Stop duplicate Russian translation builds
+on:
+  push:
+    branches: [fix/v1.3.3-updater-ru]
+    paths: ['.github/workflows/cancel-stale-v1.3.3.yml']
+permissions:
+  actions: write
+  contents: read
+jobs:
+  cancel:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Keep only the latest v1.3.3 release candidate run
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          runs="$(gh run list --repo "$GITHUB_REPOSITORY" --workflow build-v1.3.3.yml --branch fix/v1.3.3-updater-ru --limit 30 --json databaseId,status)"
+          newest="$(jq -r '[.[]|.databaseId]|max // empty' <<<"$runs")"
+          test -n "$newest"
+          echo "Keeping: $newest"
+          jq -r '.[]|select(.status=="in_progress" or .status=="queued")|.databaseId' <<<"$runs" | while read -r id; do
+            if [ "$id" != "$newest" ]; then gh run cancel "$id" --repo "$GITHUB_REPOSITORY" || true; fi
+          done

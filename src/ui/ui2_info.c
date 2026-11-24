@@ -43,7 +43,11 @@ static void about_metadata(uint32_t *p)
 {
     const enum X4TextId labels[] = {X4_TR_U49_ABOUT_VERSION, X4_TR_U49_ABOUT_DEVELOPER,
         X4_TR_U49_ABOUT_LICENSE, X4_TR_U49_ABOUT_SOURCE};
+#if X4_PUBLIC
+    const char *values[] = {X4_PRODUCT_VERSION, "Neyvoris", "GPL-3.0", "github.com/Neyvoris/XCloud5"};
+#else
     const char *values[] = {X4_PRODUCT_VERSION, "ASAP_EDGR", "GPL-3.0", "github.com/asp11edgr/XCloud4"};
+#endif
     x4_ui2_card(p, X, 342, ABOUT_META_W, 358, X4_UI2_RADIUS_CARD);
     for (unsigned i = 0; i < sizeof(labels) / sizeof(*labels); ++i) {
         const int y = 364 + (int)i * 82;

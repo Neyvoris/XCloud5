@@ -58,7 +58,9 @@ static void prepare_german(X4PictureSettingsUi *settings)
     x4_picture_settings_ui_open_section(settings, X4_PIC_SECTION_INTERFACE);
     step(settings, X4_PIC_SETTINGS_CONFIRM);
     assert(settings->dropdown_open && settings->dropdown_choice == X4_UI_LANG_AUTO);
-    step(settings, X4_PIC_SETTINGS_UP);
+    step(settings, X4_PIC_SETTINGS_UP); /* AUTO wraps to RU, newly appended. */
+    assert(settings->dropdown_choice == X4_UI_LANG_RU);
+    step(settings, X4_PIC_SETTINGS_UP); /* German keeps its saved numeric value. */
     assert(settings->dropdown_choice == X4_UI_LANG_DE);
     step(settings, X4_PIC_SETTINGS_CONFIRM);
     assert(!settings->dropdown_open && x4_picture_settings_ui_dirty(settings));
@@ -132,7 +134,7 @@ int main(int argc, char **argv)
     assert(x4_ui_lang_pref_get() == X4_UI_LANG_DE && x4_lang_current() == X4_LANG_DE);
 
     static const enum X4Lang expected[] = {
-        X4_LANG_FR, X4_LANG_ES, X4_LANG_EN, X4_LANG_PT_BR, X4_LANG_FR, X4_LANG_IT, X4_LANG_DE,
+        X4_LANG_FR, X4_LANG_ES, X4_LANG_EN, X4_LANG_PT_BR, X4_LANG_FR, X4_LANG_IT, X4_LANG_DE, X4_LANG_RU,
     };
     for (unsigned i = 0; i < X4_UI_LANG_COUNT; ++i) {
         assert(select_and_wait((X4UiLangPreference)i));

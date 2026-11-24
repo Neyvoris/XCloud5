@@ -12,6 +12,7 @@ typedef enum {
     X4_UI_LANG_FR,
     X4_UI_LANG_IT,
     X4_UI_LANG_DE,
+    X4_UI_LANG_RU,
     X4_UI_LANG_COUNT,
 } X4UiLangPreference;
 
