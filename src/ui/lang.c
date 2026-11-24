@@ -5030,6 +5030,11 @@ const char *x4_tr_for_lang(enum X4Lang language, enum X4TextId id)
         table_es, table_en, table_pt_br, table_fr, table_it, table_de, table_ru,
     };
     if ((unsigned)id >= X4_TR_ALL_COUNT) return "";
+#if X4_PUBLIC
+    /* A public update never points to upstream XCloud4, in any UI language. */
+    if (id == X4_TR_UI2_MODAL_UPDATE_LINK)
+        return "github.com/Neyvoris/XCloud5/releases";
+#endif
     if ((unsigned)language >= X4_LANG_COUNT) language = X4_LANG_EN;
     const char *text = tables[language][id];
     if (!text) text = table_en[id];
