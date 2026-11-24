@@ -158,6 +158,11 @@ static void play_error_case(int status, const char *body, const char *safe_code,
     copy_text(w->response, sizeof(w->response), body);
     session_play_failure(w, strlen(body), status);
     CHECK(w->session.state == X4_SESSION_ERROR && w->session.http_status == status);
+    CHECK(w->session.play_http_status == status);
+    uint32_t expected_play_code = safe_code && strlen(safe_code) == 10 &&
+        safe_code[0] == '0' && (safe_code[1] == 'x' || safe_code[1] == 'X') ?
+        (uint32_t)strtoul(safe_code + 2, NULL, 16) : 0;
+    CHECK(w->session.play_error_code == expected_play_code);
     CHECK(w->session.error == (status == 403 ? X4_AUTH_E_XBOX : X4_AUTH_E_STATUS));
     CHECK(w->response[0] == 0);
     x4_lang_set(X4_LANG_ES, "es-MX", "MX");
@@ -372,6 +377,8 @@ int main(void)
         "TitleNotEntitled", "The user is not entitled to play this title.", true);
     play_error_case(400, "{\"message\":\"The user does not have a license for this title.\"}",
         NULL, "The user does not have a license for this title.", true);
+    play_error_case(400, "{\"error\":{\"code\":\"0xfffff829\",\"message\":\"Xbox rejected\"}}",
+        "0xfffff829", "oculto", false);
     play_error_case(400, "{\"code\":\"FAKE_PRIVATE_CODE\",\"message\":\"FAKE_PRIVATE_GAMERTAG / FAKE_PRIVATE_TOKEN\",\"id\":\"FAKE_PRIVATE_SESSION\"}",
         NULL, "oculto", false);
     play_error_case(403, "{\"ErrorCode\":-2147467259,\"Message\":\"Forbidden\"}",

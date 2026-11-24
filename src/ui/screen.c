@@ -1095,6 +1095,10 @@ void x4_session_draw(const X4SessionSnapshot *s, int busy, int closing, uint32_t
     if(hint)x4_apple_text_wrap(p,252,656,23,X4_FONT_REGULAR,hint,1410,32,2,SOFT);
     char detail[192];
     if(s->cleanup_failed)snprintf(detail,sizeof(detail),x4_tr(X4_TR_50_SCREEN_SESSION_UNCONFIRMED_FMT),(unsigned)s->cleanup_error,s->cleanup_http_status);
+    else if(s->play_http_status)
+        snprintf(detail,sizeof(detail),"0x%08x · HTTP %d · Xbox 0x%08x · SDP %d · ICE %d",
+            (unsigned)s->error,s->play_http_status,(unsigned)s->play_error_code,
+            s->sdp_http_status,s->ice_http_status);
     else snprintf(detail,sizeof(detail),"0x%08x · HTTP %d · SDP %d · ICE %d",(unsigned)s->error,s->http_status,s->sdp_http_status,s->ice_http_status);
     x4_text_px(p,252,748,21,X4_FONT_REGULAR,detail,SOFT);
     x4_apple_draw_footer_hint(p,252,826,X4_PAD_CIRCLE,x4_tr(X4_TR_50_SCREEN_SESSION_CANCEL_CATALOG));
