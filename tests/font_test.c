@@ -49,8 +49,14 @@ int main(int argc, char **argv)
     x4_text_px(pixels, 64, 64, 32, 0, "Espa\xc3\xb1ol: \xc3\xa1 \xc3\xa9 \xc3\xad \xc3\xb3 \xc3\xba \xc3\xbc \xc2\xbf \xc2\xa1", 0xffffffffu);
     CHECK(hash(pixels) != blank);
     CHECK(x4_font_init(argv[1]) == 0); CHECK(!x4_font_is_fallback());
-    CHECK(x4_font_heap_bytes() == 3346263u);
-    CHECK(x4_font_heap_bytes() + 184531u <= 4u * 1024u * 1024u);
+    /* Atlas size changes when new languages are added: verify bounded heap
+     * use instead of pinning the byte count of the older Latin-only build. */
+    CHECK(x4_font_heap_bytes() >= 3u * 1024u * 1024u);
+    CHECK(x4_font_heap_bytes() + 256u * 1024u <= 4u * 1024u * 1024u);
+    CHECK(x4_text_width_px(32, 0, "Русский") > 0);
+    clear(pixels);
+    x4_text_px(pixels, 64, 64, 32, 0, "Русский язык — проверка шрифта", 0xffffffffu);
+    CHECK(hash(pixels) != blank);
     CHECK(x4_text_width_px(32, 0, "") == 0);
     CHECK(x4_text_width_px(32, 0, NULL) == 0);
     CHECK(x4_text_width_px(32, 0, "iii") < x4_text_width_px(32, 0, "WWW"));
