@@ -18,6 +18,11 @@ on:
 permissions:
   contents: write
 
+# Superseded commits must not waste runner minutes or race to publish assets.
+concurrency:
+  group: xcloud5-v1.3.3-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   ps4-package:
     runs-on: ubuntu-24.04
