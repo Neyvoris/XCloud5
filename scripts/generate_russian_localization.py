@@ -176,6 +176,10 @@ def translate_one(text):
     """
     if not text or not text.strip():
         return text
+    # Pure numbers, percent signs and control-unit markers are universal and
+    # must never be submitted to NMT (e.g. "0 %" is not natural language).
+    if not re.search(r"[A-Za-z]", text):
+        return text
     source = text.replace("XCloud4", "XCloud5")
     placeholders = PRINTF.findall(source)
     segments = PRINTF.split(source)
