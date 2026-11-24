@@ -46,7 +46,9 @@ enum X4SessionState {
 };
 
 /* Holds no token, session path, session ID or server body. stage is always
- * copied from a constant literal. passport_http_status is the status of the
+ * copied from a constant literal. play_http_status is the status of /play;
+ * play_error_code is either a bounded, recognized service code or zero.
+ * passport_http_status is the status of the
  * last Microsoft exchange of the authorization step (access renewal or
  * console-transfer token); connect_http_status that of /connect; 0 when the
  * exchange did not return a status. */
@@ -55,6 +57,8 @@ typedef struct {
     X4AccessCountry access_country; /* declared login country, not real location */
     int error, http_status;
     int cleanup_error, cleanup_http_status;
+    int play_http_status;
+    uint32_t play_error_code;
     int ready_seen, cleanup_failed;
     int connection_authorized, passport_http_status, connect_http_status;
     int rtc_connected, sdp_http_status, ice_http_status, keepalive_http_status;

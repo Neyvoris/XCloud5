@@ -2517,6 +2517,21 @@ static SessionPlayError session_play_error(const char *body, size_t length)
 static void session_play_failure(X4XboxWork *w, size_t length, int status)
 {
     SessionPlayError error = session_play_error(w->response, length);
+    w->session.play_http_status = status;
+    if (error.code[0] == '0' && (error.code[1] == 'x' || error.code[1] == 'X') &&
+        strlen(error.code) == 10) {
+        uint32_t value = 0;
+        bool valid = true;
+        for (size_t i = 2; i < 10; ++i) {
+            unsigned char c = (unsigned char)error.code[i];
+            unsigned digit = c >= '0' && c <= '9' ? c - '0' :
+                c >= 'a' && c <= 'f' ? c - 'a' + 10 :
+                c >= 'A' && c <= 'F' ? c - 'A' + 10 : 16;
+            if (digit >= 16) { valid = false; break; }
+            value = (value << 4) | digit;
+        }
+        if (valid) w->session.play_error_code = value;
+    }
     wipe_response(w, length);
 #if !X4_PUBLIC
     printf("XCloud4: error /play http=%d code=%s message=%.160s\n", status,
@@ -4209,9 +4224,10 @@ const X4SessionSnapshot *x4_xbox_session(X4XboxWork *w, const char *microsoft_to
 #endif
     memset(w->result.titles, 0, sizeof(w->result.titles));
     printf("XCloud4: sesion Xbox fin estado=%d http=%d error=0x%08x lista=%d autorizada=%d passport=%d "
-        "connect=%d sdp=%d ice=%d rtc=%d video=%llu audio=%llu input=%llu/%llu/0x%08x limpieza=%d/%d/0x%08x\n",
+        "play=%d/0x%08x connect=%d sdp=%d ice=%d rtc=%d video=%llu audio=%llu input=%llu/%llu/0x%08x limpieza=%d/%d/0x%08x\n",
         (int)w->session.state, w->session.http_status, (unsigned)w->session.error, w->session.ready_seen,
-        w->session.connection_authorized, w->session.passport_http_status, w->session.connect_http_status,
+        w->session.connection_authorized, w->session.passport_http_status,
+        w->session.play_http_status, (unsigned)w->session.play_error_code, w->session.connect_http_status,
         w->session.sdp_http_status, w->session.ice_http_status, w->session.rtc_connected,
         (unsigned long long)w->session.video_packets, (unsigned long long)w->session.audio_packets,
         (unsigned long long)w->session.input_packets, (unsigned long long)w->session.input_dropped,
