@@ -48,11 +48,9 @@ static Job job;
 static X4Update51View view;
 static atomic_flag view_lock = ATOMIC_FLAG_INIT;
 static _Atomic int cancelled;
-#if !X4_PUBLIC
 static _Atomic int install_choice;
 static atomic_bool leaving;
 enum InstallChoice { INSTALL_WAIT, INSTALL_BGFT, INSTALL_MANUAL };
-#endif
 static char retry_target[6];
 static bool retry_local;
 static X4Update51ManualView manual_view;
@@ -495,7 +493,6 @@ static int verify_package(const char *path, const X4UpdateManifest *manifest, ch
     return rc;
 }
 
-#if !X4_PUBLIC
 static bool install_before(const char *call, void *context)
 {
     (void)context;
@@ -541,7 +538,6 @@ static bool stop_monitor(void *context)
     (void)context;
     return atomic_load_explicit(&leaving, memory_order_acquire);
 }
-#endif
 
 static int verify_signed(const X4UpdateSigned51 *ticket, X4UpdateManifest *manifest)
 {
@@ -666,7 +662,6 @@ static int publish_manual(const X4UpdateManifest *manifest, const char *title,
     return rc;
 }
 
-#if !X4_PUBLIC
 static const char *install_failure(const X4Install51Result *result)
 {
     if (result->progress_error) return "sceBgftServiceDownloadGetProgress";
@@ -675,7 +670,6 @@ static const char *install_failure(const X4Install51Result *result)
     if (result->bgft_init_code) return "sceBgftServiceInit";
     return "x4_install51_pkg";
 }
-#endif
 
 static void *update_worker(void *unused)
 {
@@ -710,6 +704,9 @@ static void *update_worker(void *unused)
 #if !X4_PUBLIC
         enum InstallChoice choice = job.recover && !job.resume_choice ?
             INSTALL_MANUAL : choose_install();
+#else
+        enum InstallChoice choice = INSTALL_BGFT;
+#endif
         if (choice == INSTALL_BGFT) rc = verify_package(UPDATE_PKG, &manifest, title);
         if (rc) choice = INSTALL_WAIT;
         if (choice == INSTALL_BGFT) {
@@ -725,38 +722,29 @@ static void *update_worker(void *unused)
             }
         }
         if (choice == INSTALL_MANUAL)
-#endif
         {
             rc = publish_manual(&manifest, title, &result);
             checkpoint(X4_UPDATE51_MANUAL, rc, &result);
             stage(X4_UPDATE51_MANUAL, rc, false);
             return NULL;
         }
-#if !X4_PUBLIC
         if (choice == INSTALL_WAIT && !rc) rc = -ECANCELED;
-#endif
     }
     if (verified_dir(NULL, NULL)) {
         if (job.part_owned) (void)unlink(UPDATE_PART);
-#if !X4_PUBLIC
         if (job.resume_choice && rc == -ECANCELED) {
             (void)discard_staged_package();
             lock_view();
             retry_target[0] = '\0';
             unlock_view();
         } else if (rc || !result.accepted)
-#endif
         {
             if (job.pkg_owned) (void)unlink(UPDATE_PKG);
             if (job.auth_owned) (void)unlink(X4_UPDATE51_AUTH_PATH);
             if (job.target_owned) (void)unlink(UPDATE_TARGET);
         }
     }
-#if !X4_PUBLIC
     const bool accepted = result.accepted;
-#else
-    const bool accepted = false;
-#endif
     const X4Update51Stage final = !rc && accepted ? X4_UPDATE51_ACCEPTED :
         !accepted && (rc == -ECANCELED || rc == X4_HTTP_CANCELLED) ?
             X4_UPDATE51_CANCELLED : X4_UPDATE51_FAILED;
@@ -821,10 +809,8 @@ static void begin_locked(X4Update51Stage initial)
     manual_view = (X4Update51ManualView){0};
     manual_offer = false;
     atomic_store_explicit(&cancelled, 0, memory_order_relaxed);
-#if !X4_PUBLIC
     atomic_store_explicit(&install_choice, INSTALL_WAIT, memory_order_relaxed);
     atomic_store_explicit(&leaving, false, memory_order_relaxed);
-#endif
     checkpoint(initial, 0, NULL);
 }
 
@@ -892,12 +878,10 @@ void x4_update51_cancel(void)
 void x4_update51_exit(void)
 {
     x4_update51_cancel();
-#if !X4_PUBLIC
     if (x4_update51_view().stage == X4_UPDATE51_ACCEPTED) {
         const time_t now = time(NULL);
         if (now > 0) (void)x4_update_log51_note_exit((uint64_t)now);
     }
     atomic_store_explicit(&leaving, true, memory_order_release);
-#endif
 }
 #endif

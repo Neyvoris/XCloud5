@@ -51,7 +51,6 @@ typedef struct {
 int32_t x4_install51_free_space(const char *path, uint64_t *bytes, int *native_errno,
     X4Install51Space *trace);
 
-#if !X4_PUBLIC
 typedef void (*X4Install51Observe)(const X4Install51Result *result, void *context);
 typedef bool (*X4Install51StopMonitor)(void *context);
 typedef bool (*X4Install51Before)(const char *call, void *context);
@@ -64,6 +63,7 @@ int32_t x4_install51_pkg(const char *verified_path, const char *title_id, uint64
     X4Install51Result *result, X4Install51Observe observe,
     X4Install51StopMonitor stop_monitor, X4Install51Before before, void *context);
 
+#if !X4_PUBLIC
 /* Isolated diagnostic for the Lab. It never opens or installs a package. */
 int32_t x4_install51_diagnose_appinst(X4Install51Result *result, X4Install51Observe observe,
     X4Install51Before before, void *context);

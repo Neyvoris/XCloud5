@@ -124,9 +124,7 @@ LIBS := -lScePosix -lc -lkernel -lSceVideoOut -lSceGnmDriver -lScePad -lSceUserS
 SOURCES := $(wildcard src/core/*.c src/ui/*.c src/video/*.c src/input/*.c src/audio/*.c src/auth/*.c src/streaming/*.c src/media/*.c)
 ifeq ($(X4_VIDEO_PROBE),0)
 CFLAGS += -DX4_UPDATE51_ENABLED=1
-ifeq ($(X4_PUBLIC),0)
 LIBS += -lSceBgft -lSceAppInstUtil
-endif
 SOURCES += $(wildcard src/update/*.c)
 endif
 ifneq ($(X4_PROBE_T26),1)
