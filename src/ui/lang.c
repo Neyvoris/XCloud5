@@ -5358,9 +5358,25 @@ const char *x4_tr_stage(const char *stage)
         if (!strcmp(stage, stage_map[i].es)) return stage_translation(i, current_lang);
     }
     if (!strncmp(stage, X4_STAGE_PLAY_FAILED_PREFIX, sizeof(X4_STAGE_PLAY_FAILED_PREFIX) - 1)) {
-        static char play_stage[96];
-        (void)snprintf(play_stage, sizeof(play_stage), x4_tr(X4_TR_50_STAGE_PLAY_FAILED_FMT),
-            stage + sizeof(X4_STAGE_PLAY_FAILED_PREFIX) - 1);
+        static char play_stage[384];
+        const char *code = stage + sizeof(X4_STAGE_PLAY_FAILED_PREFIX) - 1;
+        int n = snprintf(play_stage, sizeof(play_stage), x4_tr(X4_TR_50_STAGE_PLAY_FAILED_FMT), code);
+        /* HTTP 400 on /play usually means the account has no cloud license
+         * for this title: it must be owned/claimed in the Microsoft Store. */
+        if (strstr(code, "HTTP 400") && n > 0 && (size_t)n < sizeof(play_stage)) {
+            static const char *const hint[X4_LANG_COUNT] = {
+                [X4_LANG_ES] = " Debes tener este juego en tu cuenta: cómpralo u obtenlo (gratis) en Microsoft Store.",
+                [X4_LANG_EN] = " You must own this game on your account: buy it or claim it (if free) in the Microsoft Store.",
+                [X4_LANG_PT_BR] = " Você precisa ter este jogo na sua conta: compre ou resgate (se gratuito) na Microsoft Store.",
+                [X4_LANG_FR] = " Ce jeu doit être sur votre compte : achetez-le ou obtenez-le (s’il est gratuit) sur le Microsoft Store.",
+                [X4_LANG_IT] = " Devi possedere il gioco sul tuo account: acquistalo o ottienilo (se gratuito) nel Microsoft Store.",
+                [X4_LANG_DE] = " Das Spiel muss in deinem Konto sein: kaufe es oder hole es (falls kostenlos) im Microsoft Store.",
+                [X4_LANG_RU] = " Игра должна быть на вашем аккаунте: купите её или получите (если бесплатная) в Microsoft Store.",
+            };
+            enum X4Lang l = current_lang;
+            const char *h = ((unsigned)l < X4_LANG_COUNT && hint[l]) ? hint[l] : hint[X4_LANG_EN];
+            (void)snprintf(play_stage + n, sizeof(play_stage) - (size_t)n, "%s", h);
+        }
         return play_stage;
     }
     /* HTTP stages are wrapped into a public snapshot as "HTTPS: <stage>".
