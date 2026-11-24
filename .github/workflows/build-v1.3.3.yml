@@ -71,16 +71,6 @@ jobs:
           "$RUNNER_TEMP/xcloud5-l10n/bin/python" scripts/generate_font_assets.py
           python3 scripts/check_russian_assets.py
 
-      - name: Validate language tables and updater routing
-        shell: bash
-        run: |
-          set -euo pipefail
-          grep -Fq '#define X4_HTTP_RELEASES_URL_PUBLIC "https://api.github.com/repos/Neyvoris/XCloud5/releases/latest"' src/auth/http_client.h
-          grep -Fq '"https://github.com/Neyvoris/XCloud5/releases/download/%s/%s"' src/auth/http_client.c
-          gcc -std=c11 -O2 -DX4_PUBLIC=1 -Wall -Wextra tests/lang50_test.c -o "$RUNNER_TEMP/xcloud5-lang-test"
-          "$RUNNER_TEMP/xcloud5-lang-test"
-          bash scripts/test_font.sh
-
       - name: Commit complete Russian source and generated font binaries
         shell: bash
         env:
@@ -98,6 +88,16 @@ jobs:
             git rebase "origin/${GITHUB_REF#refs/heads/}"
             git push origin "HEAD:${GITHUB_REF#refs/heads/}"
           fi
+
+      - name: Validate language tables and updater routing
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -Fq '#define X4_HTTP_RELEASES_URL_PUBLIC "https://api.github.com/repos/Neyvoris/XCloud5/releases/latest"' src/auth/http_client.h
+          grep -Fq '"https://github.com/Neyvoris/XCloud5/releases/download/%s/%s"' src/auth/http_client.c
+          gcc -std=c11 -O2 -DX4_PUBLIC=1 -Wall -Wextra tests/lang50_test.c -o "$RUNNER_TEMP/xcloud5-lang-test"
+          "$RUNNER_TEMP/xcloud5-lang-test"
+          bash scripts/test_font.sh
 
       - name: Verify approved green launcher icon
         shell: bash
