@@ -166,6 +166,15 @@ int main(void)
                 continue;
             }
 #endif
+#if X4_PUBLIC
+            /* Public release link is intentionally rewritten at display time;
+             * the original language-table pointer must not leak upstream. */
+            if (id == X4_TR_UI2_MODAL_UPDATE_LINK) {
+                assert(!strcmp(x4_tr_for_lang((enum X4Lang)(X4_LANG_PT_BR + i),
+                    (enum X4TextId)id), "github.com/Neyvoris/XCloud5/releases"));
+                continue;
+            }
+#endif
             assert(translated[i][id] == x4_tr_for_lang((enum X4Lang)(X4_LANG_PT_BR + i), (enum X4TextId)id));
         }
     }
