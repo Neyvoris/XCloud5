@@ -878,10 +878,12 @@ void x4_update51_cancel(void)
 void x4_update51_exit(void)
 {
     x4_update51_cancel();
+#if !X4_PUBLIC
     if (x4_update51_view().stage == X4_UPDATE51_ACCEPTED) {
         const time_t now = time(NULL);
         if (now > 0) (void)x4_update_log51_note_exit((uint64_t)now);
     }
+#endif
     atomic_store_explicit(&leaving, true, memory_order_release);
 }
 #endif
