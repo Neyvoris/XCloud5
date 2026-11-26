@@ -27,6 +27,8 @@ XCloud5 brings an Xbox-style cloud gaming experience to a **PS4 running GoldHEN*
 
 **Updater security:** The built-in automatic installer requires a separately signed update manifest and signature. Releases with only a PKG and SHA-256 text file must use the manual GoldHEN installation method; verification is not silently bypassed. The update prompt and release URL now identify the correct repository. Real-hardware testing is still required.
 
+In the public build, XCloud5 starts a signed update while idle at the home screen, downloads and verifies the package, then queues installation through the PS4 BGFT service. It does not start while a game session, authentication flow, or launch is active. Once PS4 accepts the package, XCloud5 closes so the system can finish installing it. If BGFT cannot accept the package, XCloud5 keeps the verified PKG in `/data/pkg` for manual installation.
+
 ### v1.3.2 — New PlayStation 4 icon (23 November 2026)
 
 - Added the approved **Xbox-green XCloud5 app icon** with a white cloud, Xbox emblem, minimal PS4 controller silhouette, and XCloud5 wordmark.

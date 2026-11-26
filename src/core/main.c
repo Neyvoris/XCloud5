@@ -1056,9 +1056,7 @@ int main(void)
     X4UpdateNotice update_notice = {0};
 #ifdef X4_UPDATE51_ENABLED
     bool update_progress_open = false, update_manual = false, update_rejected = false;
-#if !X4_PUBLIC
     uint64_t update_close_at = 0;
-#endif
     X4Update51View update_view = {0};
 #endif
 #if X4_STREAM_PROFILE && !X4_PUBLIC
@@ -1500,7 +1498,6 @@ reopen_interface:;
             if (update_progress_open) {
                 if (!update_rejected) update_view = x4_update51_view();
                 const uint32_t pressed = controller.pressed;
-#if !X4_PUBLIC
                 if (update_view.stage != X4_UPDATE51_ACCEPTED) update_close_at = 0;
                 if (update_view.stage == X4_UPDATE51_ACCEPTED) {
                     if (!update_close_at) update_close_at = input_at + UINT64_C(5000000);
@@ -1510,7 +1507,6 @@ reopen_interface:;
                         update_close_at = 0;
                     }
                 } else
-#endif
                 if (pressed & ORBIS_PAD_BUTTON_CIRCLE) {
                     if (update_view.stage == X4_UPDATE51_FAILED ||
                         update_view.stage == X4_UPDATE51_CANCELLED ||
@@ -3222,9 +3218,10 @@ reopen_interface:;
             !picture_settings_ui.open && !game_page_ui.open && !x4_server_settings_awaiting_first_choice() &&
             !screen.open_settings_requested && !screen.explore_catalog_requested &&
             !fortnite_login_flow && pending_auth < 0 && !pending_launch &&
-            !x4_auth_busy(auth) && !live_retained && !session_back;
+            !x4_auth_busy(auth) && !live_retained && !live_visible && !session_back &&
+            !cloud_launch.open && !remember_notice && !logout_notice && !screen.exit_error;
 #ifdef X4_UPDATE51_ENABLED
-        update_home_idle = update_home_idle && !update_progress_open;
+        update_home_idle = update_home_idle && !update_progress_open && !x4_update51_view().busy;
 #endif
 #if X4_STREAM_PROFILE && !X4_PUBLIC
         update_home_idle = update_home_idle && !stream_settings_ui.open;
@@ -3248,14 +3245,36 @@ reopen_interface:;
             char version[32], tag[64];
             (void)x4_release_check_status(version,sizeof(version));
             bool valid_tag = x4_release_check_tag(tag,sizeof(tag));
-            if (x4_apple_update_notice_offer(&update_notice,version,valid_tag ? tag : NULL,true,false)) {
 #ifdef X4_UPDATE51_ENABLED
-                update_notice.can_install = valid_tag && x4_release_check_asset(X4_UPDATE51_MANIFEST) &&
+#if X4_PUBLIC
+            const bool signed_update = valid_tag &&
+                x4_release_check_asset(X4_UPDATE51_MANIFEST) &&
+                x4_release_check_asset(X4_UPDATE51_SIGNATURE);
+            if (signed_update && !update_progress_open &&
+                !cloud_launch.open && !remember_notice && !logout_notice) {
+                update_rejected = !x4_update51_start_checked(tag, false, update_home_idle, &update_view);
+                update_notice.shown = true;
+                update_progress_open = true;
+                update_manual = false;
+            } else
+            if (x4_apple_update_notice_offer(&update_notice,version,valid_tag ? tag : NULL,true,false)) {
+                update_notice.can_install = false;
+                update_notice.install_focused = false;
+            }
+#else
+            if (x4_apple_update_notice_offer(&update_notice,version,valid_tag ? tag : NULL,true,false)) {
+                update_notice.can_install = valid_tag &&
+                    x4_release_check_asset(X4_UPDATE51_MANIFEST) &&
                     x4_release_check_asset(X4_UPDATE51_SIGNATURE);
                 update_notice.install_focused = update_notice.can_install;
                 update_manual = false;
-#endif
             }
+#endif
+#else
+            if (x4_apple_update_notice_offer(&update_notice,version,valid_tag ? tag : NULL,true,false)) {
+                update_manual = false;
+            }
+#endif
         }
         const bool settings_page = picture_settings_ui.open && !picture_settings_ui.first_time_mode;
         bool lab_page = false, lab_modal = false;
@@ -3409,14 +3428,12 @@ reopen_interface:;
             UI_HASH(update_progress_open);
             if (update_progress_open) {
                 if (!update_rejected) update_view = x4_update51_view();
-#if !X4_PUBLIC
                 if (update_view.stage == X4_UPDATE51_ACCEPTED) {
                     update_view.close_seconds = !update_close_at ? 5u : draw_at >= update_close_at ? 0u :
                         (unsigned)((update_close_at - draw_at + UINT64_C(999999)) / UINT64_C(1000000));
                 }
                 UI_HASH(update_view.manual_selected);
                 UI_HASH(update_view.close_seconds);
-#endif
                 UI_HASH(update_view.stage);
                 UI_HASH(update_view.received / 100000u);
                 UI_HASH(update_view.total);

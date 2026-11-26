@@ -18,7 +18,7 @@
 extern int _fstatfs(int fd, void *out);
 #endif
 
-#if defined(X4_OPENORBIS) && !X4_PUBLIC
+#if defined(X4_OPENORBIS)
 #include <orbis/AppInstUtil.h>
 #include <orbis/Bgft.h>
 #include <orbis/libkernel.h>
@@ -81,7 +81,7 @@ static bool fs_version51(uint32_t version)
 }
 #endif
 
-#if defined(X4_OPENORBIS) && !X4_PUBLIC
+#if defined(X4_OPENORBIS)
 enum { BGFT_HEAP_BYTES51 = 1024 * 1024, BGFT_HEAP_ALIGN51 = 16 };
 static void *bgft_storage51;
 #endif
@@ -180,7 +180,7 @@ int32_t x4_install51_free_space(const char *path, uint64_t *bytes, int *native_e
     return rc;
 }
 
-#if defined(X4_OPENORBIS) && !X4_PUBLIC
+#if defined(X4_OPENORBIS)
 typedef struct {
     X4Install51Observe observe;
     X4Install51StopMonitor stop_monitor;
@@ -270,7 +270,7 @@ static int32_t install_bgft51(const char *path, const char *title_id, uint64_t b
     package.params.entitlementType = 5;
     package.params.id = title_id;
     package.params.contentUrl = path;
-    package.params.contentName = "XCloud4 Lab";
+    package.params.contentName = X4_PUBLIC ? "XCloud5" : "XCloud4 Lab";
     package.params.iconPath = "";
     package.params.playgoScenarioId = "0";
     package.params.option = ORBIS_BGFT_TASK_OPT_NONE;
@@ -295,7 +295,6 @@ static int32_t install_bgft51(const char *path, const char *title_id, uint64_t b
 }
 #endif
 
-#if !X4_PUBLIC
 int32_t x4_install51_pkg(const char *verified_path, const char *title_id, uint64_t pkg_bytes,
     X4Install51Result *result, X4Install51Observe observe,
     X4Install51StopMonitor stop_monitor, X4Install51Before before, void *context)
@@ -318,6 +317,7 @@ int32_t x4_install51_pkg(const char *verified_path, const char *title_id, uint64
 #endif
 }
 
+#if !X4_PUBLIC
 int32_t x4_install51_diagnose_appinst(X4Install51Result *result, X4Install51Observe observe,
     X4Install51Before before, void *context)
 {

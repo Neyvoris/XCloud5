@@ -404,9 +404,7 @@ void x4_ui2_update_job_draw(const X4Update51View *job, uint32_t *p)
     if (!p || !job) return;
     const X4Ui2ModalAction cancel = {X4_PAD_CIRCLE, x4_tr(X4_TR_ACCESS_CANCEL), false, true, false};
     const X4Ui2ModalAction close = {X4_PAD_CIRCLE, x4_tr(X4_TR_UPDATE_NOTICE_CLOSE), false, true, true};
-#if !X4_PUBLIC
     const X4Ui2ModalAction exit = {X4_PAD_CROSS, x4_tr(X4_TR_51F_CLOSE_NOW), true, true, false};
-#endif
     const char *title = x4_tr(X4_TR_51_UPDATE_NOW);
     if (job->stage == X4_UPDATE51_DOWNLOADING) {
         char got[16], total[16], label[64];
@@ -432,22 +430,18 @@ void x4_ui2_update_job_draw(const X4Update51View *job, uint32_t *p)
         x4_ui2_modal_message(p, title, x4_tr(X4_TR_51_UPDATE_VERIFY), NULL, X4_UI2_MUTED, &cancel, 1);
         break;
     case X4_UPDATE51_INSTALLING:
-#if X4_PUBLIC
-        x4_ui2_modal_message(p, x4_tr(X4_TR_51F_MANUAL_TITLE), x4_tr(X4_TR_51G_PREPARE_MANUAL),
-            NULL, X4_UI2_MUTED, NULL, 0);
-#else
         x4_ui2_modal_message(p, x4_tr(X4_TR_51B_INSTALL_TITLE), x4_tr(X4_TR_51_UPDATE_INSTALL),
             NULL, X4_UI2_MUTED, NULL, 0);
-#endif
         break;
-#if !X4_PUBLIC
     case X4_UPDATE51_ACCEPTED: {
         char body[256];
-        (void)snprintf(body, sizeof(body), x4_tr(X4_TR_51F_CLOSE_IN_FMT), job->close_seconds);
+        (void)snprintf(body, sizeof(body), x4_tr(X4_TR_51F_CLOSE_IN_FMT),
+            X4_PUBLIC ? "XCloud5" : "XCloud4", job->close_seconds);
         x4_ui2_modal_message(p, x4_tr(X4_TR_51B_INSTALL_TITLE), body,
             NULL, X4_UI2_MUTED, &exit, 1);
         break;
     }
+#if !X4_PUBLIC
     case X4_UPDATE51_CHOOSE: {
         const X4Ui2ModalAction actions[] = {
             {X4_PAD_CIRCLE, x4_tr(X4_TR_ACCESS_CANCEL), false, false, false},

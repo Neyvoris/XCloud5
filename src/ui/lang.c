@@ -1070,7 +1070,7 @@ static const char *const table_es[X4_TR_ALL_COUNT] = {
     [X4_TR_51F_APPINST_CONFIRM] = "Iniciar prueba",
     [X4_TR_51F_APPINST_START_ERROR] = "No se pudo iniciar la prueba de AppInstUtil.",
     [X4_TR_51F_CLOSE_NOW] = "Cerrar ahora",
-    [X4_TR_51F_CLOSE_IN_FMT] = "La PS4 está instalando la actualización. XCloud4 se cerrará en %u s. Revisa las notificaciones y vuelve a abrirlo cuando termine.",
+    [X4_TR_51F_CLOSE_IN_FMT] = "La PS4 está instalando la actualización. %s se cerrará en %u s. Revisa las notificaciones y vuelve a abrirlo cuando termine.",
     [X4_TR_51F_UPDATED_TITLE] = "Actualización instalada",
     [X4_TR_51F_UPDATED_FMT] = "XCloud4 se actualizó a %s.",
     [X4_TR_51F_RESUME] = "La PS4 aún muestra la versión anterior. El paquete verificado sigue listo.",
@@ -1972,7 +1972,7 @@ static const char *const table_en[X4_TR_ALL_COUNT] = {
     [X4_TR_51F_APPINST_CONFIRM] = "Start test",
     [X4_TR_51F_APPINST_START_ERROR] = "Could not start the AppInstUtil test.",
     [X4_TR_51F_CLOSE_NOW] = "Close now",
-    [X4_TR_51F_CLOSE_IN_FMT] = "The PS4 is installing the update. XCloud4 will close in %u s. Check notifications and reopen it when installation finishes.",
+    [X4_TR_51F_CLOSE_IN_FMT] = "The PS4 is installing the update. %s will close in %u s. Check notifications and reopen it when installation finishes.",
     [X4_TR_51F_UPDATED_TITLE] = "Update installed",
     [X4_TR_51F_UPDATED_FMT] = "XCloud4 was updated to %s.",
     [X4_TR_51F_RESUME] = "The PS4 is still running the previous version. The verified package is ready.",
@@ -2726,7 +2726,7 @@ static const char *const table_pt_br[X4_TR_ALL_COUNT] = {
     [X4_TR_51F_APPINST_CONFIRM] = "Iniciar teste",
     [X4_TR_51F_APPINST_START_ERROR] = "Não foi possível iniciar o teste do AppInstUtil.",
     [X4_TR_51F_CLOSE_NOW] = "Fechar agora",
-    [X4_TR_51F_CLOSE_IN_FMT] = "O PS4 está instalando a atualização. O XCloud4 fechará em %u s. Veja as notificações e reabra o app ao terminar.",
+    [X4_TR_51F_CLOSE_IN_FMT] = "O PS4 está instalando a atualização. O %s fechará em %u s. Veja as notificações e reabra o app ao terminar.",
     [X4_TR_51F_UPDATED_TITLE] = "Atualização instalada",
     [X4_TR_51F_UPDATED_FMT] = "O XCloud4 foi atualizado para %s.",
     [X4_TR_51F_RESUME] = "O PS4 ainda está na versão anterior. O pacote verificado está pronto.",
@@ -3480,7 +3480,7 @@ static const char *const table_fr[X4_TR_ALL_COUNT] = {
     [X4_TR_51F_APPINST_CONFIRM] = "Lancer le test",
     [X4_TR_51F_APPINST_START_ERROR] = "Impossible de démarrer le test AppInstUtil.",
     [X4_TR_51F_CLOSE_NOW] = "Fermer maintenant",
-    [X4_TR_51F_CLOSE_IN_FMT] = "La PS4 installe la mise à jour. XCloud4 se fermera dans %u s. Consultez les notifications, puis rouvrez l’application.",
+    [X4_TR_51F_CLOSE_IN_FMT] = "La PS4 installe la mise à jour. %s se fermera dans %u s. Consultez les notifications, puis rouvrez l’application.",
     [X4_TR_51F_UPDATED_TITLE] = "Mise à jour installée",
     [X4_TR_51F_UPDATED_FMT] = "XCloud4 a été mis à jour vers la version %s.",
     [X4_TR_51F_RESUME] = "La PS4 utilise encore la version précédente. Le paquet vérifié est prêt.",
@@ -4234,7 +4234,7 @@ static const char *const table_it[X4_TR_ALL_COUNT] = {
     [X4_TR_51F_APPINST_CONFIRM] = "Avvia test",
     [X4_TR_51F_APPINST_START_ERROR] = "Impossibile avviare il test AppInstUtil.",
     [X4_TR_51F_CLOSE_NOW] = "Chiudi ora",
-    [X4_TR_51F_CLOSE_IN_FMT] = "La PS4 sta installando l’aggiornamento. XCloud4 si chiuderà tra %u s. Controlla le notifiche e riapri l’app al termine.",
+    [X4_TR_51F_CLOSE_IN_FMT] = "La PS4 sta installando l’aggiornamento. %s si chiuderà tra %u s. Controlla le notifiche e riapri l’app al termine.",
     [X4_TR_51F_UPDATED_TITLE] = "Aggiornamento installato",
     [X4_TR_51F_UPDATED_FMT] = "XCloud4 è stato aggiornato alla versione %s.",
     [X4_TR_51F_RESUME] = "La PS4 usa ancora la versione precedente. Il pacchetto verificato è pronto.",
@@ -4988,7 +4988,7 @@ static const char *const table_de[X4_TR_ALL_COUNT] = {
     [X4_TR_51F_APPINST_CONFIRM] = "Test starten",
     [X4_TR_51F_APPINST_START_ERROR] = "Der AppInstUtil-Test konnte nicht gestartet werden.",
     [X4_TR_51F_CLOSE_NOW] = "Jetzt schließen",
-    [X4_TR_51F_CLOSE_IN_FMT] = "Die PS4 installiert das Update. XCloud4 schließt sich in %u s. Prüfe die Mitteilungen und öffne die App nach der Installation erneut.",
+    [X4_TR_51F_CLOSE_IN_FMT] = "Die PS4 installiert das Update. %s schließt sich in %u s. Prüfe die Mitteilungen und öffne die App nach der Installation erneut.",
     [X4_TR_51F_UPDATED_TITLE] = "Update installiert",
     [X4_TR_51F_UPDATED_FMT] = "XCloud4 wurde auf %s aktualisiert.",
     [X4_TR_51F_RESUME] = "Auf der PS4 läuft noch die vorige Version. Das geprüfte Paket ist bereit.",
@@ -5358,9 +5358,25 @@ const char *x4_tr_stage(const char *stage)
         if (!strcmp(stage, stage_map[i].es)) return stage_translation(i, current_lang);
     }
     if (!strncmp(stage, X4_STAGE_PLAY_FAILED_PREFIX, sizeof(X4_STAGE_PLAY_FAILED_PREFIX) - 1)) {
-        static char play_stage[96];
-        (void)snprintf(play_stage, sizeof(play_stage), x4_tr(X4_TR_50_STAGE_PLAY_FAILED_FMT),
-            stage + sizeof(X4_STAGE_PLAY_FAILED_PREFIX) - 1);
+        static char play_stage[384];
+        const char *code = stage + sizeof(X4_STAGE_PLAY_FAILED_PREFIX) - 1;
+        int n = snprintf(play_stage, sizeof(play_stage), x4_tr(X4_TR_50_STAGE_PLAY_FAILED_FMT), code);
+        /* HTTP 400 on /play usually means the account has no cloud license
+         * for this title: it must be owned/claimed in the Microsoft Store. */
+        if (strstr(code, "HTTP 400") && n > 0 && (size_t)n < sizeof(play_stage)) {
+            static const char *const hint[X4_LANG_COUNT] = {
+                [X4_LANG_ES] = " Debes tener este juego en tu cuenta: cómpralo u obtenlo (gratis) en Microsoft Store.",
+                [X4_LANG_EN] = " You must own this game on your account: buy it or claim it (if free) in the Microsoft Store.",
+                [X4_LANG_PT_BR] = " Você precisa ter este jogo na sua conta: compre ou resgate (se gratuito) na Microsoft Store.",
+                [X4_LANG_FR] = " Ce jeu doit être sur votre compte : achetez-le ou obtenez-le (s’il est gratuit) sur le Microsoft Store.",
+                [X4_LANG_IT] = " Devi possedere il gioco sul tuo account: acquistalo o ottienilo (se gratuito) nel Microsoft Store.",
+                [X4_LANG_DE] = " Das Spiel muss in deinem Konto sein: kaufe es oder hole es (falls kostenlos) im Microsoft Store.",
+                [X4_LANG_RU] = " Игра должна быть на вашем аккаунте: купите её или получите (если бесплатная) в Microsoft Store.",
+            };
+            enum X4Lang l = current_lang;
+            const char *h = ((unsigned)l < X4_LANG_COUNT && hint[l]) ? hint[l] : hint[X4_LANG_EN];
+            (void)snprintf(play_stage + n, sizeof(play_stage) - (size_t)n, "%s", h);
+        }
         return play_stage;
     }
     /* HTTP stages are wrapped into a public snapshot as "HTTPS: <stage>".
