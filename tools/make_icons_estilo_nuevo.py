@@ -71,10 +71,10 @@ def cloud_outline(img, cy, width, thickness, blur):
     img.paste(gradient, (0, 0), outline)
 
 
-def wordmark(img, y, size):
+def wordmark(img, y, size, digit="4"):
     draw = ImageDraw.Draw(img)
     font = ImageFont.truetype(FONT, size)
-    name, digit = "XCloud", "4"
+    name = "XCloud"
     name_width = draw.textlength(name, font=font)
     digit_width = draw.textlength(digit, font=font)
     x = (img.width - name_width - digit_width) / 2
@@ -103,7 +103,7 @@ def icon(lab=False):
     return img.resize((512, 512), Image.Resampling.LANCZOS)
 
 
-def splash():
+def splash(digit):
     w, h = 1920, 1080
     img = radial(w, h, w * 0.5, h * 0.45, w * 0.62, (26, 40, 58), NAVY)
     green_glow = Image.new("L", img.size, 0)
@@ -113,7 +113,7 @@ def splash():
     ImageDraw.Draw(cyan_glow).ellipse([-w * 0.25, -h * 0.35, w * 0.38, h * 0.45], fill=255)
     img.paste(CYAN, (0, 0), cyan_glow.filter(ImageFilter.GaussianBlur(160)).point(lambda v: int(v * 0.14)))
     cloud_outline(img, h * 0.40, 330, 9, 14)
-    wordmark(img, int(h * 0.56), 96)
+    wordmark(img, int(h * 0.56), 96, digit)
     return img
 
 
@@ -122,8 +122,8 @@ def main():
     parser.add_argument("--check", action="store_true", help="verify PNG bytes without writing")
     args = parser.parse_args()
 
-    public_splash = splash()
-    lab_splash = public_splash.copy()
+    public_splash = splash("5")
+    lab_splash = splash("4")
     lab_badge(lab_splash, 1, 56)
     images = {
         "icon0.png": icon(), "icon0-lab.png": icon(lab=True),

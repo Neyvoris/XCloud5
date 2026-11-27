@@ -1405,7 +1405,7 @@ int x4_apple_draw_footer_hint(uint32_t *pixels, int x, int y,
 
 void x4_apple_draw_brand_logo(uint32_t *pixels, int x, int y)
 {
-    const char *brand = "XCloud4";
+    const char *brand = X4_DISPLAY_NAME;
     uint32_t white = X4_RGB(0xF5, 0xF7, 0xFA);
     uint32_t accent = X4_UI2_ACCENT;
     x4_text_px(pixels, x, y, 32, X4_FONT_BOLD, brand, white);

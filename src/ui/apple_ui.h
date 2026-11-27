@@ -122,7 +122,7 @@ int x4_apple_draw_pad_glyph(uint32_t *pixels, int x, int y,
 int x4_apple_draw_footer_hint(uint32_t *pixels, int x, int y,
                               enum X4PadGlyph glyph, const char *label);
 
-/* Top-left "XCloud4/" brand mark with green slash and top-right account/gear pills. */
+/* Top-left app brand mark with green slash and top-right account/gear pills. */
 void x4_apple_draw_brand_logo(uint32_t *pixels, int x, int y);
 void x4_apple_draw_account_pill(uint32_t *pixels, int x, int y, int h,
                                 const char *label, bool signed_in, bool focused);

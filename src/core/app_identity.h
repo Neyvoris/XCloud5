@@ -2,18 +2,24 @@
 #pragma once
 #include "build_identity.h"
 
+#if X4_PUBLIC
+#define X4_DISPLAY_NAME "XCloud5"
+#else
+#define X4_DISPLAY_NAME "XCloud4"
+#endif
+
 /* The app presents the signed updater identity. The transport and
  * media keep their existing compatibility labels. */
 #if !X4_VIDEO_PROBE
 #undef X4_PRODUCT_VERSION
 #undef X4_SOURCE_ID
 #if X4_PUBLIC
-#define X4_PRODUCT_VERSION "1.3.3"
+#define X4_PRODUCT_VERSION "1.3.4"
 #else
 #define X4_PRODUCT_VERSION "0.7.111-lab"
 #endif
 #if X4_PUBLIC
-#define X4_APP_VERSION "01.50"
+#define X4_APP_VERSION "01.51"
 #else
 #define X4_APP_VERSION "01.79"
 #endif

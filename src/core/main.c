@@ -326,7 +326,7 @@ static void loading_begin_cached(X4CatalogAssets *assets,const X4CatalogTitle *t
     memset(&view,0,sizeof(view));
     int acquired=assets&&title&&title->product_id[0]&&x4_catalog_assets_acquire(assets,title->product_id,&view);
     const X4CoverRaster *image=acquired&&view.surface[X4_COVER_DETAIL].rgba?&view.surface[X4_COVER_DETAIL]:NULL;
-    bool ready=x4_loading_screen_begin(title?title->name:"XCloud4",image,now);
+    bool ready=x4_loading_screen_begin(title && title->name[0] ? title->name : X4_DISPLAY_NAME,image,now);
     if(acquired)x4_catalog_assets_release(assets,&view);
     if(!ready)printf("XCloud4 UI loading: cache allocation unavailable; existing session screen retained\n");
 }

@@ -231,7 +231,7 @@ static void header(uint32_t *p, const X4Controller *c)
 {
     x4_rect(p, 0, 0, X4_WIDTH, X4_HEIGHT, BG);
     x4_rect(p, 84, 88, 12, 78, GREEN);
-    x4_text(p, 122, 92, 9, "XCloud4", WHITE);
+    x4_text(p, 122, 92, 9, X4_DISPLAY_NAME, WHITE);
     x4_text(p, 1420, 110, 3, X4_PRODUCT_VERSION, MUTED);
     x4_rect(p, 84, 205, 1752, 2, PANEL);
     x4_text(p, 84, 963, 3, c->data.connected ? x4_tr(X4_TR_DS4_CONNECTED) : x4_tr(X4_TR_DS4_CONNECT), c->data.connected ? GREEN : MUTED);
@@ -732,7 +732,7 @@ static void project_page(uint32_t *p)
     x4_apple_glass_panel(p,270,150,1380,782,28,24,46);
     if(s_home_ctx.app_icon && s_home_ctx.app_icon->rgba)
         x4_apple_blit_image_rounded(p,430,196,128,128,24,s_home_ctx.app_icon,X4_GRAD_NONE);
-    x4_text_px(p,606,194,60,X4_FONT_BOLD,X4_PUBLIC ? "XCloud5" : "XCloud4",INK);
+    x4_text_px(p,606,194,60,X4_FONT_BOLD,X4_DISPLAY_NAME,INK);
     x4_text_px(p,608,270,30,X4_FONT_SEMIBOLD,x4_tr(X4_TR_50_SCREEN_ABOUT_TAGLINE),INK);
     x4_text_px(p,430,348,24,X4_FONT_REGULAR,x4_tr(X4_TR_U49_ABOUT_DESCRIPTION),SOFT);
     x4_apple_fill_round_rect(p,430,392,1060,1,0,X4_RGBA(255,255,255,38));
