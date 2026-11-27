@@ -1,4 +1,4 @@
-name: Build XCloud5 v1.3.4 Russian UI and PS4 PKG
+name: Build XCloud5 v1.3.5 Russian UI and PS4 PKG
 
 on:
   workflow_dispatch:
@@ -8,7 +8,7 @@ permissions:
 
 # Superseded commits must not waste runner minutes or race to publish assets.
 concurrency:
-  group: xcloud5-v1.3.4-${{ github.ref }}
+  group: xcloud5-v1.3.5-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -166,23 +166,23 @@ jobs:
             X4_INGRESS_MODE=mpsc X4_VIDEO_CAPACITY_1080=1 X4_VIDEO_PROBE=0 \
             X4_STREAM_PROFILE=1 X4_PUBLIC=1 all
 
-      - name: Package verified XCloud5 v1.3.4 PS4 installer
+      - name: Package verified XCloud5 v1.3.5 PS4 installer
         shell: bash
         run: |
           set -euo pipefail
           X4_PACKAGE_MODE=public X4_STREAM_PROFILE=1 X4_PUBLIC=1 bash scripts/empaquetar.sh
           python3 scripts/package_identity.py verify --mode public
-          test -s dist/XCloud5-1.3.4-PS4.pkg
-          sha256sum dist/XCloud5-1.3.4-PS4.pkg | tee dist/SHA256SUMS.txt
+          test -s dist/XCloud5-1.3.5-PS4.pkg
+          sha256sum dist/XCloud5-1.3.5-PS4.pkg | tee dist/SHA256SUMS.txt
           echo "Verified output directory:"
           find dist -maxdepth 1 -type f -printf "%f (%s bytes)\n"
 
       - name: Upload installer as workflow artifact
         uses: actions/upload-artifact@v4
         with:
-          name: XCloud5-v1.3.4-PS4
+          name: XCloud5-v1.3.5-PS4
           path: |
-            dist/XCloud5-1.3.4-PS4.pkg
+            dist/XCloud5-1.3.5-PS4.pkg
             dist/SHA256SUMS.txt
           if-no-files-found: error
           retention-days: 30
