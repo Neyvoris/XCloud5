@@ -199,7 +199,9 @@ $(OBJECTS): build/build_config.h
 
 build/update/update_job51.o: build/update/pubkey51.h
 
-build/update/pubkey51.h: src/update/release_pubkey.pem tools/embed_update_pubkey.py
+UPDATE_PUBKEY := $(if $(filter 1,$(X4_PUBLIC)),src/update/xcloud5_release_pubkey.pem,src/update/release_pubkey.pem)
+
+build/update/pubkey51.h: $(UPDATE_PUBKEY) tools/embed_update_pubkey.py
 	mkdir -p $(dir $@)
 	python3 tools/embed_update_pubkey.py $< $@
 

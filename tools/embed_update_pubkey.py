@@ -7,6 +7,7 @@ import hashlib
 from pathlib import Path
 
 EXPECTED_SHA256 = "2663584d81c0fa6a05bf0cbe878c286902fba284ea5dad5cbc0101b268203595"
+X5_EXPECTED_SHA256 = "21ebc0d072e2caead3fcf9faf5795046e185b7b6d1f8a76ec5ef60cf2b6eeff8"
 P256_PREFIX = bytes.fromhex("3059301306072a8648ce3d020106082a8648ce3d03010703420004")
 
 
@@ -21,7 +22,8 @@ def public_der(path):
     if len(der) != len(P256_PREFIX) + 64 or not der.startswith(P256_PREFIX):
         raise ValueError("Se requiere una clave pública ECDSA P-256")
     digest = hashlib.sha256(der).hexdigest()
-    if path.name == "release_pubkey.pem" and digest != EXPECTED_SHA256:
+    expected = {"release_pubkey.pem": EXPECTED_SHA256, "xcloud5_release_pubkey.pem": X5_EXPECTED_SHA256}.get(path.name)
+    if expected and digest != expected:
         raise ValueError("La huella DER no coincide con la clave pública de release")
     return der, digest
 
